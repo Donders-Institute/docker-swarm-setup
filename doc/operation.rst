@@ -30,6 +30,15 @@ After this command is issued, a new cluster is created with only one manager (i.
 Node operation
 ==============
 
+System provisioning
+^^^^^^^^^^^^^^^^^^^
+
+The operating system and the docker engine on the node is provisioned using the DCCN linux-server kickstart.  The following kickstart files are used:
+
+* ``/mnt/install/kickstart-*/ks-*-dccn-dk.cfg``: the main kickstart configuration file
+* ``/mnt/install/kickstart-*/postkit-dccn-dk/script-selection``: main script to trigger post-kickstart scripts
+* ``/mnt/install/kickstart-*/setup-docker-*``: the docker-specific post-kickstart scripts
+
 Join the cluster
 ^^^^^^^^^^^^^^^^
 
