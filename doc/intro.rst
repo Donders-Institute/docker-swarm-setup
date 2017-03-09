@@ -4,6 +4,9 @@ Introduction to Docker Swarm
 Docker in a Nutshell
 ====================
 
+* `what is docker? <https://www.docker.com/what-docker>`_
+* `Learning docker <https://docs.docker.com/learn/>`_
+
 Docker swarm cluster
 ====================
 
