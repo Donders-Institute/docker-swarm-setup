@@ -39,6 +39,81 @@ The operating system and the docker engine on the node is provisioned using the 
 * ``/mnt/install/kickstart-*/postkit-dccn-dk/script-selection``: main script to trigger post-kickstart scripts
 * ``/mnt/install/kickstart-*/setup-docker-*``: the docker-specific post-kickstart scripts
 
+**Configure devicemapper to direct-lvm mode**
+
+    By default, the devicemapper of docker is running the loop-lvm mode which is known to be suboptimal for performance.  In a production environment, the direct-lvm mode is recommended.  How to configure the devicemapper to use direct-lvm mode is described `here <https://docs.docker.com/engine/userguide/storagedriver/device-mapper-driver/#configure-direct-lvm-mode-for-production>`_.
+    
+    Hereafter is a script summarizing the all steps.  The script is also available at ``/mnt/docker/scripts/node-management/docker-thinpool.sh``.
+    
+    .. code-block:: bash
+        :linenos:
+        
+        #!/bin/bash
+
+        if [ $# -ne 1 ]; then
+            echo "USAGE: $0 <device>" 
+            exit 1
+        fi
+
+        # get raw device path (e.g. /dev/sdb) from the command-line argument 
+        device=$1
+
+        # check if the device is available
+        file -s ${device} | grep 'cannot open'
+        if [ $? -eq 0 ]; then
+            echo "device not found: ${device}"
+            exit 1
+        fi
+
+        # install/update the LVM package
+        yum install -y lvm2
+
+        # create a physical volume on device
+        pvcreate ${device}
+
+        # create a volume group called 'docker'
+        vgcreate docker ${device}
+
+        # create logical volumes within the 'docker' volume group: one for data, one for metadate
+        # assign volume size with respect to the size of the volume group
+        lvcreate --wipesignatures y -n thinpool docker -l 95%VG
+        lvcreate --wipesignatures y -n thinpoolmeta docker -l 1%VG
+        lvconvert -y --zero n -c 512K --thinpool docker/thinpool --poolmetadata docker/thinpoolmeta
+
+        # update the lvm profile for volume autoextend
+        cat >/etc/lvm/profile/docker-thinpool.profile <<EOL
+        activation {
+            thin_pool_autoextend_threshold=80
+            thin_pool_autoextend_percent=20
+        }
+        EOL
+
+        # apply lvm profile
+        lvchange --metadataprofile docker-thinpool docker/thinpool
+
+        lvs -o+seg_monitor
+
+        # create daemon.json file to instruct docker using the created logical volumes
+        cat >/etc/docker/daemon.json <<EOL
+        {
+            "insecure-registries": ["docker-registry.dccn.nl:5000"],
+            "storage-driver": "devicemapper",
+            "storage-opts": [
+                 "dm.thinpooldev=/dev/mapper/docker-thinpool",
+                 "dm.use_deferred_removal=true",
+                 "dm.use_deferred_deletion=true"
+            ]
+        }
+        EOL
+
+        # remove legacy deamon configuration through docker.service.d to avoid confliction with daemon.json
+        if [ -f /etc/systemd/system/docker.service.d/swarm.conf ]; then
+            mv /etc/systemd/system/docker.service.d/swarm.conf /etc/systemd/system/docker.service.d/swarm.conf.bk
+        fi 
+
+        # reload daemon configuration
+        systemctl daemon-reload
+
 Join the cluster
 ^^^^^^^^^^^^^^^^
 
