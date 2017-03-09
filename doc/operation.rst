@@ -60,6 +60,37 @@ If the node is a manager, the option ``-f`` (or ``--force``) should also be used
 
 .. tip::
     An alternative way to remove a node from the cluster directly is to run the ``docker node rm`` command on a manager node.
+    
+Promote and demote node
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Node in the cluster can be demoted (from manager to worker) or promoted (from worker to manager).  This is done by using the command:
+
+.. code-block:: bash
+
+    $ docker node promote <WorkerNodeName>
+    $ docker node demote <ManagerNodeName>
+    
+Monitor nodes
+^^^^^^^^^^^^^
+
+To list all nodes in the cluster, do
+
+.. code-block:: bash
+
+    $ docker node ls
+    
+To inspect a node, do
+
+.. code-block:: bash
+
+    $ docker node inspect <NodeName>
+    
+To list tasks running on a node, do
+
+.. code-block:: bash
+
+    $ docker node ps <NodeName>
 
 Service operation
 =================
