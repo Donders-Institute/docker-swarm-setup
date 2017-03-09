@@ -162,7 +162,7 @@ To update a service, one uses the command ``docker service update``.  The follow
 .. code-block:: bash
 
     $ docker service update \
-    --image docker-registry.dccn.nl:5000/nginx:1.2.0docker-registry.dccn.nl:5000/nginx:1.2.0 \
+    --image docker-registry.dccn.nl:5000/nginx:1.2.0 \
     webapp-proxy
 
 More options can be found `here <https://docs.docker.com/engine/reference/commandline/service_update/>`_.
