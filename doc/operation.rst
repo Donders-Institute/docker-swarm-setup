@@ -138,6 +138,8 @@ Options used above is explained in the following table:
 
 More options can be found `here <https://docs.docker.com/engine/reference/commandline/service_create/>`_.
 
+.. _remove_service:
+
 remove a service
 ^^^^^^^^^^^^^^^^
 
@@ -209,6 +211,8 @@ When there is an update in the stack description file (e.g. ``docker-compose.yml
 .. note::
     Every stack will be created with an overlay network in swarm, and organise services within the network.  The name of the network is ``<StackName>_default``.
 
+.. _remove_stack:
+
 remove a stack
 ^^^^^^^^^^^^^^
 
@@ -246,8 +250,8 @@ Emergancy shutdown
     The emergency shutdown should take place **before** the network and the central storage are down.
 
 #. login to one manager
-#. ref:`demote <promote_demote_node>` other managers
-#. remove all stacks and services
+#. :ref:`demote <promote_demote_node>` other managers
+#. remove running :ref:`stacks <remove_stack>` and :ref:`services <remove_service>`
 #. shutdown all workers
 #. shutdown the manager
 
@@ -256,7 +260,7 @@ Reboot from shutdown
 
 #. boot on the manager node (the last one being shutted down)
 #. boot on other nodes
-#. promote nodes to manager up to the desired situation
+#. :ref:`promote nodes <promote_demote_node>` until a desired number of managers is reached
 #. deploy firstly the docker-registry stack
 
    .. code-block:: bash
