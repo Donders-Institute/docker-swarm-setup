@@ -41,7 +41,7 @@ The operating system and the docker engine on the node is provisioned using the 
 
 **Configure devicemapper to direct-lvm mode**
 
-    By default, the devicemapper of docker is running the loop-lvm mode which is known to be suboptimal for performance.  In a production environment, the direct-lvm mode is recommended.  How to configure the devicemapper to use direct-lvm mode is described `here <https://docs.docker.com/engine/userguide/storagedriver/device-mapper-driver/#configure-direct-lvm-mode-for-production>`_.
+    By default, the `devicemapper storage drive <https://docs.docker.com/engine/userguide/storagedriver/device-mapper-driver/>`_ of docker is running the loop-lvm mode which is known to be suboptimal for performance.  In a production environment, the direct-lvm mode is recommended.  How to configure the devicemapper to use direct-lvm mode is described `here <https://docs.docker.com/engine/userguide/storagedriver/device-mapper-driver/#configure-direct-lvm-mode-for-production>`_.
     
     Hereafter is a script summarizing the all steps.  The script is also available at ``/mnt/docker/scripts/node-management/docker-thinpool.sh``.
     
