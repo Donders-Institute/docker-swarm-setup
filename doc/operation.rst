@@ -128,6 +128,17 @@ After the docker daemon is started, the node should be joined to the cluster.  T
 
 After the command is retrieved, it should be run on the node that is about to join to the cluster.
 
+Set Node label
+^^^^^^^^^^^^^^
+
+Node label helps group nodes in certain features.  Currently, the node in production is labled with ``function=production`` using the following command:
+
+.. code-block:: bash
+
+    $ docker node update --label-add function=production <NodeName>
+    
+When deploying a service or stack, the label is used for locate service tasks.
+
 Leave the cluster
 ^^^^^^^^^^^^^^^^^
 
