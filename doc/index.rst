@@ -6,8 +6,6 @@
 DCCN Docker Swarm Cluster
 *************************
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
 
@@ -15,3 +13,4 @@ Contents:
    System design <design.rst>
    System operation <operation.rst>
    System monitoring <monitor.rst>
+   Service development <devops.rst>
