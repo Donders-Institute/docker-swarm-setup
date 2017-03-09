@@ -276,6 +276,6 @@ Reboot from shutdown
 Disaster recovery
 =================
 
-Hopefully there is no need to go though it!
+Hopefully there is no need to go though it!! For the moment, we are not `backing up the state of the swarm cluster <https://docs.docker.com/engine/swarm/admin_guide/#back-up-the-swarm>`_ as it requires stopping a manager in a regular basis.
 
-In any case, `here <https://docs.docker.com/engine/swarm/admin_guide/#recover-from-disaster>`_ is the official instruction of disaster recovery.
+Nevertheless, `here <https://docs.docker.com/engine/swarm/admin_guide/#recover-from-disaster>`_ is the official instruction of disaster recovery.
