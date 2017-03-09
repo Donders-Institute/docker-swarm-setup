@@ -7,7 +7,7 @@ Cluster initialisation
 .. note::
     In most of cases, there is no need to initialse another cluster.
 
-Before there is anything, the cluster should be initialised.  Simply run the command below on a docker node to initialise a new cluster:
+Before there is anything, a cluster should be initialised.  Simply run the command below on a docker node to initialise a new cluster:
 
 .. code-block:: bash
 
