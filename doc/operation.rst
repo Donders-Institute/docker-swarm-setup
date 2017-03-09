@@ -69,7 +69,9 @@ If the node is a manager, the option ``-f`` (or ``--force``) should also be used
 
 .. tip::
     An alternative way to remove a node from the cluster directly is to run the ``docker node rm`` command on a manager node.
-    
+
+.. _promote_demote_node:
+
 Promote and demote node
 ^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -244,13 +246,13 @@ Emergancy shutdown
     The emergency shutdown should take place **before** the network and the central storage are down.
 
 #. login to one manager
-#. demote other managers
-#. remove all services
+#. ref:`demote <promote_demote_node>` other managers
+#. remove all stacks and services
 #. shutdown all workers
 #. shutdown the manager
 
-Rebooting from shutdown
-^^^^^^^^^^^^^^^^^^^^^^^
+Reboot from shutdown
+^^^^^^^^^^^^^^^^^^^^
 
 #. boot on the manager node (the last one being shutted down)
 #. boot on other nodes
@@ -261,6 +263,9 @@ Rebooting from shutdown
 
        $ cd /mnt/docker/scripts/microservices/registry/
        $ sudo ./start.sh
+       
+   .. note::
+       The docker-registry stack should be firstly made available as other services/stacks will need to pull container images from it.
 
 #. deploy other stacks and services
 
