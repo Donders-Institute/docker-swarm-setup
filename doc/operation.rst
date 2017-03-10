@@ -364,6 +364,6 @@ Disaster recovery
 
 Hopefully there is no need to go though it!!
 
-For the moment, we are not `backing up the state of the swarm cluster <https://docs.docker.com/engine/swarm/admin_guide/#back-up-the-swarm>`_.  Given that the container data has been stored (and backedup) on the central storage, the impact of lossing a cluster is not dramatic (as long as the container data is available, it is already possible to restart all services on a fresh new cluster).
+For the moment, we are not `backing up the state of the swarm cluster <https://docs.docker.com/engine/swarm/admin_guide/#back-up-the-swarm>`_.  Given that the container data has been stored (and backedup) on the central storage, the impact of losing a cluster is not dramatic (as long as the container data is available, it is already possible to restart all services on a fresh new cluster).
 
 Nevertheless, `here <https://docs.docker.com/engine/swarm/admin_guide/#recover-from-disaster>`_ is the official instruction of disaster recovery.
