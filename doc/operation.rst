@@ -194,7 +194,7 @@ Service operation
 
 In swarm cluster, a service is created by deploying a container in the cluster.  The container can be deployed as a singel instance (i.e. task) or multiple instances to achieve service failover and load-balancing.
 
-start a service
+Start a service
 ^^^^^^^^^^^^^^^
 
 To start a service in the cluster, one uses the ``docker service create`` command.  Hereafter is an example for starting a ``nginx`` web service in the cluster using the container image ``docker-registry.dccn.nl:5000/nginx:1.0.0``:
@@ -226,7 +226,7 @@ More options can be found `here <https://docs.docker.com/engine/reference/comman
 
 .. _remove_service:
 
-remove a service
+Remove a service
 ^^^^^^^^^^^^^^^^
 
 Simply use the ``docker service rm <ServiceName>`` to remove a running service in the cluster.  It is not normal to remove a productional service.
@@ -234,7 +234,7 @@ Simply use the ``docker service rm <ServiceName>`` to remove a running service i
 .. Tip::
     In most of cases, you should consider **updating the service** rather than removing it.
 
-update a service
+Update a service
 ^^^^^^^^^^^^^^^^
 
 It is very common to update a productional service.  Think about the following conditions that you will need to update the service:
@@ -253,7 +253,7 @@ To update a service, one uses the command ``docker service update``.  The follow
 
 More options can be found `here <https://docs.docker.com/engine/reference/commandline/service_update/>`_.
 
-monitor services
+Monitor services
 ^^^^^^^^^^^^^^^^
 
 To list all running services:
@@ -283,7 +283,7 @@ Here is :ref:`an example <docker-compose-data-stager>` of defining the three ser
 
 Using the ``docker stack`` command you can manage multiple services in one consistent manner.
 
-deploy (update) a stack
+Deploy (update) a stack
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 Assuming the docker-compose file is called ``docker-compose.yml``, to launch the services defined in it in the swarm cluster is:
@@ -299,7 +299,7 @@ When there is an update in the stack description file (e.g. ``docker-compose.yml
 
 .. _remove_stack:
 
-remove a stack
+Remove a stack
 ^^^^^^^^^^^^^^
 
 Use the following command to remove a stack from the cluster:
