@@ -43,6 +43,15 @@ The operating system and the docker engine on the node is provisioned using the 
 
     By default, the `devicemapper storage drive <https://docs.docker.com/engine/userguide/storagedriver/device-mapper-driver/>`_ of docker is running the loop-lvm mode which is known to be suboptimal for performance.  In a production environment, the direct-lvm mode is recommended.  How to configure the devicemapper to use direct-lvm mode is described `here <https://docs.docker.com/engine/userguide/storagedriver/device-mapper-driver/#configure-direct-lvm-mode-for-production>`_.
     
+    Before configuring the direct-lvm mode for the devicemapper, make sure the directory `/var/lib/docker` is removed. Also make sure the physical volume, volume group, logical volumes are removed, e.g.
+    
+    .. code-block:: bash
+        
+        $ lvremove /dev/docker/thinpool
+        $ lvremove /dev/docker/thinpoolmeta
+        $ vgremove docker
+        $ pvremove /dev/sdb
+    
     Hereafter is a script summarizing the all steps.  The script is also available at ``/mnt/docker/scripts/node-management/docker-thinpool.sh``.
     
     .. code-block:: bash
@@ -96,6 +105,7 @@ The operating system and the docker engine on the node is provisioned using the 
         # create daemon.json file to instruct docker using the created logical volumes
         cat >/etc/docker/daemon.json <<EOL
         {
+            "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2375"],
             "insecure-registries": ["docker-registry.dccn.nl:5000"],
             "storage-driver": "devicemapper",
             "storage-opts": [
