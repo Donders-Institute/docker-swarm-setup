@@ -364,7 +364,7 @@ Reboot from shutdown
 ^^^^^^^^^^^^^^^^^^^^
 
 .. note::
-    By the accidental network outage in August 2017 (Domain Controller upgrade), the cluster nodes were not reacheable and required power-off to reboot. In this case, the emergancy shutdown procedure was not followed.  Interestingly, the cluster was recovered automatically after sufficient amount of master nodes became online.  All services were also re-deployed immediately without any human intervention. 
+    By the accidental network outage in August 2017 (Domain Controller upgrade), the cluster nodes were not reacheable and required hard (i.e. push the power button) to reboot. In this case, the emergancy shutdown procedure was not followed.  Interestingly, the cluster was recovered automatically after sufficient amount of master nodes became online.  All services were also re-deployed immediately without any human intervention. 
 
 #. boot on the manager node (the last one being shutted down)
 #. boot on other nodes
