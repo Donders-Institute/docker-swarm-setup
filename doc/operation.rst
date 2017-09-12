@@ -1,6 +1,15 @@
 Swarm cluster operation procedures
 **********************************
 
+Key terminologies
+=================
+
+- **cluster** is a group of docker-engine-enabled nodes (bare-matel or virtual machines). Each node has either a **master** or **worker** role in the cluster. At least one master node is required for a cluster to operate.
+- **master** refers to the node maintaining the state of the cluster. There can be one or more masters in a cluster. The more masters in the cluster, the higher level of the cluster fault-tolerance.
+- **worker** refers to the node sharing the workload in the cluster.
+- **(micro-)service** is a logical representation of multiple replicas of the same container.  Replicas are used for service load-balancing and/or failover.
+- **stack** is a set of linked **services**.
+
 Cluster initialisation
 ======================
 
@@ -353,6 +362,9 @@ Emergancy shutdown
 
 Reboot from shutdown
 ^^^^^^^^^^^^^^^^^^^^
+
+.. note::
+    By the accidental network outage in August 2017 (Domain Controller upgrade), the cluster nodes were not reacheable and required power-off to reboot. In this case, the emergancy shutdown procedure was not followed.  Interestingly, the cluster was recovered automatically after sufficient amount of master nodes became online.  All services were also re-deployed immediately without any human intervention. 
 
 #. boot on the manager node (the last one being shutted down)
 #. boot on other nodes
