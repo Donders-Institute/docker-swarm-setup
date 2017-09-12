@@ -11,9 +11,9 @@ All docker nodes are bare-matel machines running CentOS operating system.  The n
 All docker nodes also NFS-mount the ``/mnt/docker`` directory for sharing container data.  The figure below shows the architecture of the DCCN swarm cluster.
 
 .. figure:: figures/dccn_swarm_architecture.png
-    :scale: 75 %
+   :scale: 50%
     
-    The DCCN swarm cluster - a simplified illustration of the architecture.
+   The DCCN swarm cluster - a simplified illustration of the architecture.
 
 Image registry
 ==============
