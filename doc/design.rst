@@ -8,7 +8,12 @@ System architecture
 
 All docker nodes are bare-matel machines running CentOS operating system.  The nodes are provisioned using the DCCN linux-server kickstart. They all NFS-mount the ``/home`` and ``/project`` directories, and use the active directory service for user authentication and authorisation. Only the TG members are allowed to SSH login to the docker nodes.
 
-All docker nodes also NFS-mount the ``/mnt/docker`` directory for sharing container data.
+All docker nodes also NFS-mount the ``/mnt/docker`` directory for sharing container data.  The figure below shows the architecture of the DCCN swarm cluster.
+
+.. figure:: figures/dccn_swarm_architecture.png
+    :scale: 75 %
+    
+    The DCCN swarm cluster - a simplified illustration of the architecture.
 
 Image registry
 ==============
