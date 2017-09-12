@@ -1,7 +1,7 @@
 Docker swarm cluster at DCCN
 ****************************
 
-The first swarm cluster at DCCN was developed in order to deploy and manage service components (e.g. DICOM services, data streamer, data stager) realising the automatic lab-data flow.  The inital setup consists of 8 nodes retired from the HPC and the EXSi clusters.
+The first swarm cluster at DCCN was developed in order to deploy and manage service components (e.g. DICOM services, data streamer, data stager) realising the automatic lab-data flow.  The inital setup consists of 8 nodes repurposed from the HPC and the EXSi clusters.
 
 System architecture
 ===================
