@@ -1,8 +1,8 @@
 Swarm cluster operation procedures
 **********************************
 
-Key terminologies
-=================
+Terminologies
+=============
 
 - **cluster** is a group of docker-engine-enabled nodes (bare-matel or virtual machines). Each node has either a **master** or **worker** role in the cluster. At least one master node is required for a cluster to operate.
 - **master** refers to the node maintaining the state of the cluster. There can be one or more masters in a cluster. The more masters in the cluster, the higher level of the cluster fault-tolerance.
