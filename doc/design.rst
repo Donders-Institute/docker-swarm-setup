@@ -23,20 +23,7 @@ Within the swarm cluster, a private image registry is provided to as a central r
 The registry endpoint is ``docker-registry.dccn.nl:5000``. An overview of repository images can be seen `here <http://docker-registry.dccn.nl>`_.
 
 .. Note::
-    For the sake of simplicity, the internal private registry is not using the SSL encryption. Therefore the docker daemon needs to be instructed to trust the registry.  It can be done by adding ``insecure-registries`` in ``/etc/docker/daemon.json``.  For example,
-
-    .. code-block:: json
-       :emphasize-lines: 2
-
-        {
-            "insecure-registries": ["docker-registry.dccn.nl:5000"],
-            "storage-driver": "devicemapper",
-            "storage-opts": [
-                 "dm.thinpooldev=/dev/mapper/docker-thinpool",
-                 "dm.use_deferred_removal=true",
-                 "dm.use_deferred_deletion=true"
-            ]
-        }
+    For the sake of simplicity, the internal private registry is using a self-signed X.509 certificate. In order to trust it, one needs to copy the certificate of the docker registry server to the docker host, under the directory, e.g. ``/etc/docker/certs.d/docker-registry.dccn.nl:5000/ca.crt``.
 
 Service orchestration
 =====================
