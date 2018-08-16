@@ -61,7 +61,7 @@ The operating system and the docker engine on the node is provisioned using the 
         $ vgremove docker
         $ pvremove /dev/sdb
     
-    Hereafter is a script summarizing the all steps.  The script is also available at ``/mnt/docker/scripts/node-management/docker-thinpool.sh``.
+    Hereafter is a script summarizing the all steps.  The script is also available at ``/mnt/install/kickstart-7/docker/docker-thinpool.sh``.
     
     .. code-block:: bash
         :linenos:
