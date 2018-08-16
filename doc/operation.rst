@@ -291,6 +291,14 @@ To inspect a service:
 .. code-block:: bash
 
     $ docker service inspect <ServiceName>
+    
+To retrieve logs written to the STDOU/STDERR by the service process, one could do:
+
+.. code-block:: bash
+
+    $ docker service logs [-f] <ServiceName>
+    
+where the option ``-f`` is used to follow the output.
 
 Stack operation
 ===============
