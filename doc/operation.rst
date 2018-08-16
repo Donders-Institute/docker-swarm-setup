@@ -115,7 +115,6 @@ The operating system and the docker engine on the node is provisioned using the 
         cat >/etc/docker/daemon.json <<EOL
         {
             "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2375"],
-            "insecure-registries": ["docker-registry.dccn.nl:5000"],
             "storage-driver": "devicemapper",
             "storage-opts": [
                  "dm.thinpooldev=/dev/mapper/docker-thinpool",
