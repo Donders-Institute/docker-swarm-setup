@@ -74,7 +74,7 @@ TODO: recreate the index.html file within the container, restart the container a
 ### use volume (mapping to host's filesystem)
 
 ```bash
-docker run --rm -d -p 8080:80 --name myhttpd -v $PWD/html:/var/www/html httpd:centos
+docker run --rm -d -p 8080:80 --name myhttpd -v $PWD/htmldoc:/var/www/html httpd:centos
 ```
 
 TODO: change the files on the host, and see if it's updated in the container by reloading the page
