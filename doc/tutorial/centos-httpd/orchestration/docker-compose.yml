@@ -1,0 +1,34 @@
+version: '3.1'
+
+networks:
+    dbnet:
+
+services:
+    db:
+        image: mysql:latest
+        hostname: db
+        command: --default-authentication-plugin=mysql_native_password
+        environment:
+            - MYSQL_ROOT_PASSWORD=admin123
+            - MYSQL_DATABASE=registry
+            - MYSQL_USER=demo
+            - MYSQL_PASSWORD=demo123
+        volumes:
+            - ./initdb.d:/docker-entrypoint-initdb.d
+            - ./data:/var/lib/mysql
+        networks:
+            - dbnet
+    web:
+        build:
+            context: ../basic
+            dockerfile: Dockerfile_php
+        image: php:centos
+        volumes:
+            - ./app:/var/www/html
+            - ./log:/var/log/httpd
+        networks:
+            - dbnet
+        ports:
+            - 8080:80
+        depends_on:
+            - db
