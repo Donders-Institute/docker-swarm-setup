@@ -3,9 +3,9 @@
 	<?php include('include/header.php'); ?>
 </head>
 <body>
-	<div class="container-fluid">
-	        <?php include('include/navbar.php'); ?>
-		<h2>User registration</h2>
+	<?php include('include/navbar.php'); ?>
+	<main class="container">
+		<h1 class="mt-5">User registration</h1>
 		<form action="register.php" method="POST" id="registrationForm">
 			<div class="form-group">
 				<label for="name">Your name:</label>
@@ -17,7 +17,7 @@
 			</div>
 			<button type="submit" class="btn btn-default">Submit</button>
 		</form>
-	</div>
+	</main>
 	<?php include('include/footer.php'); ?>
 </body>
 </html>
