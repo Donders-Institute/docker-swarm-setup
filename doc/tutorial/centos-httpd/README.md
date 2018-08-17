@@ -8,23 +8,30 @@ Through building and spinning off the Apache HTTPd container with PHP support, y
 
 ## Build image
 
+```bash
 docker build -t httpd:centos .
+```
 
 ## Check image layers, and aligh the Dockerfile with the layers
 
+```bash
 docker history httpd:centos
+```
 
 ## Start a container using the image, note the port
 
+```bash
 docker run --rm -d -p 8080:80 --name myhttpd httpd:centos
 docker ps
 docker exec -it bash myhttpd bash
+```
 
 ## Play around
 
 - check the web page: open http://localhost:8080 in the browser.
 - find from where the index.html is served, that's replace it within the container:
 
+```bash
    cat > /var/www/html/index.html <<EOF
 <html>
 <head></head>
@@ -38,13 +45,16 @@ docker exec -it bash myhttpd bash
 </body>
 </html>
 EOF
+```
 
 - find the location where the httpd log is stored
 
 ## Let's restart the container
 
+```bash
 docker stop myhttpd
 docker run --rm -d -p 8080:80 --name myhttpd httpd:centos
+```
 
 Question: what will we see as the home page? The CentOS default, or the one we edited?
 
@@ -53,37 +63,57 @@ Question: what will we see as the home page? The CentOS default, or the one we e
 ### make the file static in the container
 
 ### use volume (image)
+
+```bash
 docker volume create htmldoc
 docker run --rm -d -p 8080:80 --name myhttpd -v htmldoc:/var/www/html httpd:centos
+```
 
 TODO: recreate the index.html file within the container, restart the container and see the index.html is persistent.
 
 ### use volume (mapping to host's filesystem)
+
+```bash
 docker run --rm -d -p 8080:80 --name myhttpd -v $PWD/html:/var/www/html httpd:centos
+```
 
 TODO: change the files on the host, and see if it's updated in the container by reloading the page
 
 TODO: how about restarting the container with
+
+```bash
 docker run --rm -d -p 8080:80 --name myhttpd -v $PWD/htmldoc:/var/www/html:ro httpd:centos
+```
 
 ### The httpd log is in /var/log/httpd within the container
 
 Question: how to preserve the log on the host?
 
+```bash
 docker run --rm -d -p 8080:80 --name myhttpd -v $PWD/htmldoc:/var/www/html:ro -v $PWD/log:/var/log/httpd httpd:centos
+```
 
 ## Update the Dockerfile to install php
+
+```bash
 docker build -t php:centos -f Dockerfile_php .
 docker history php:centos
 docker run --rm -d -p 8088:80 --name myhttpd-php -v $PWD/htmldoc:/var/www/html:ro -v $PWD/log:/var/log/httpd php:centos
+```
 
 ## Stop the container
+
+```bash
 docker stop myhttpd
 docker stop myhttpd-php
+```
 
 ## Remove the image
+
+```
 docker rmi httpd:centos
 docker rmi php:centos
+```
 
 ## Let's make use the official MySQL container
 
