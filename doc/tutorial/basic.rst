@@ -55,7 +55,7 @@ The Dockerfile above is explained below.
 
 Each line of the Dockerfile is taken as a *step* of the build.  It started with a **keyword** followed by **argument(s)**.
 
-**Line 1:** All container images are built from a basis image.  This is indicated by the ``FROM`` keyword. In this example, the basis image is the official CentOS 7 image from the Docker Hub.
+**Line 1:** all container images are built from a basis image.  This is indicated by the ``FROM`` keyword. In this example, the basis image is the official CentOS 7 image from the Docker Hub.
 
 **Line 2-3:** a container image can be created with metadata.  For instance, the ``MAINTAINER`` and ``LABEL`` attributes are provided in the example.
 
@@ -84,7 +84,7 @@ Here we give the image a *name:tag* with the ``-t`` option.  With that, the imag
 
 Keep your eyes on the output of the build process.  You will find the steps in the Dockerfile are executed sequencially, and some output (e.g. the output from ``yum install``) looks like as if you are running in a CentOS7 system.
 
-What interesting to notice are lines with random hashcodes on them.  For example:
+What interesting to notice are lines with hash strings.  For example:
 
 .. code-block:: none
 
