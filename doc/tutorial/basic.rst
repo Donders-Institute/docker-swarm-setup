@@ -51,16 +51,23 @@ Dockerfile is a `YAML <https://en.wikipedia.org/wiki/YAML>`_ document describing
 
 The Dockerfile above is explained below:
 
-#. Each line of the Dockerfile is taken as a *step* of the build.  It started with a **keyword** followed by **argument(s)**.
+Each line of the Dockerfile is taken as a *step* of the build.  It started with a **keyword** followed by **argument(s)**.
 
-#. **Line 1:** All container images are built from a basis image.  This is indicated by the ``FROM`` keyword. In this example, the basis image is the official CentOS 7 image from the public docker repository.
-#. **Line 2-3:** a container image can be created with metadata.  For instance, the ``MAINTAINER`` and ``LABEL`` attributes are provided in the example.
-#. **Line 8-10:** since we want to build a image for running the HTTPd server, we uses the YUM package manager to install the ``httpd`` package within the container; and it is done by using the ``RUN`` keyword.
-#. **Line 12:** we know that the HTTPd service will run on port number 80, we asked the container to expose that port.
-#. **Line 14:** comments in Dockerfile are started with the ``#``.
-#. **Line 15:** the `run-httpd.sh <https://raw.githubusercontent.com/Donders-Institute/docker-swarm-setup/master/doc/tutorial/centos-httpd/basic/run-httpd.sh>`_ file is something we want to add from the host machine into the container image, as it is a script for bootstraping the HTTPd service after the container is started.  Thus, we make use of the ``ADD`` keyword here for *copying the file "run-httpd.sh" on the host into the root directory (i.e. /run-httpd.sh) of the container image*.
-#. **Line 16:** here we make the HTTPd bootstrap script executable so that it can be run within the container.  It is done using the ``RUN`` keyword again.
-#. **Line 18:** the keyword ``CMD`` specifies the command to run when the container is started.  Here we want to run the bootstrap script we have just copied into the container.
+**Line 1:** All container images are built from a basis image.  This is indicated by the ``FROM`` keyword. In this example, the basis image is the official CentOS 7 image from the public docker repository.
+
+**Line 2-3:** a container image can be created with metadata.  For instance, the ``MAINTAINER`` and ``LABEL`` attributes are provided in the example.
+
+**Line 8-10:** since we want to build a image for running the HTTPd server, we uses the YUM package manager to install the ``httpd`` package within the container; and it is done by using the ``RUN`` keyword.
+
+**Line 12:** we know that the HTTPd service will run on port number 80, we asked the container to expose that port.
+
+**Line 14:** comments in Dockerfile are started with the ``#``.
+
+**Line 15:** the `run-httpd.sh <https://raw.githubusercontent.com/Donders-Institute/docker-swarm-setup/master/doc/tutorial/centos-httpd/basic/run-httpd.sh>`_ file is something we want to add from the host machine into the container image, as it is a script for bootstraping the HTTPd service after the container is started.  Thus, we make use of the ``ADD`` keyword here for *copying the file "run-httpd.sh" on the host into the root directory (i.e. /run-httpd.sh) of the container image*.
+
+**Line 16:** here we make the HTTPd bootstrap script executable so that it can be run within the container.  It is done using the ``RUN`` keyword again.
+
+**Line 18:** the keyword ``CMD`` specifies the command to run when the container is started.  Here we want to run the bootstrap script we have just copied into the container.
 
 Building the container image
 ============================
@@ -113,10 +120,13 @@ With the image built successfully, we can now start a container with the image u
 
 A few options are used here:
 
-- ``--rm`` instructs Docker to remove the container when the container is stopped.
-- ``-d`` instructs Docker to run the container in a detached mode.
-- ``-p`` instructs Docker to map the host's network port ``8080`` to the container's network port ``80`` so that this service is accessible from the host's external network.
-- ``--name`` names the container so that the container can be later referred easily.
+Option ``--rm`` instructs Docker to remove the container when the container is stopped.
+
+Option ``-d`` instructs Docker to run the container in a detached mode.
+
+Option ``-p`` instructs Docker to map the host's network port ``8080`` to the container's network port ``80`` so that this service is accessible from the host's external network.
+
+Option ``--name`` names the container so that the container can be later referred easily.
 
 Container layer
 ---------------
