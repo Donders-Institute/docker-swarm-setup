@@ -4,11 +4,11 @@ Swarm cluster operation procedures
 Terminologies
 =============
 
-- **cluster** is a group of docker-engine-enabled nodes (bare-matel or virtual machines). Each node has either a **manager** or **worker** role in the cluster. At least one master node is required for a cluster to operate.
-- **manager** refers to the node maintaining the state of the cluster. There can be one or more managers in a cluster. The more managers in the cluster, the higher level of the cluster fault-tolerance.
-- **worker** refers to the node sharing the workload in the cluster.
-- **(micro-)service** is a logical representation of multiple replicas of the same container.  Replicas are used for service load-balancing and/or failover.
-- **stack** is a set of linked **services**.
+**Cluster** is a group of docker-engine-enabled nodes (bare-matel or virtual machines). Each node has either a **manager** or **worker** role in the cluster. At least one master node is required for a cluster to operate.
+**Manager** refers to the node maintaining the state of the cluster. There can be one or more managers in a cluster. The more managers in the cluster, the higher level of the cluster fault-tolerance.
+**Worker** refers to the node sharing the workload in the cluster.
+**(Micro-)service** is a logical representation of multiple replicas of the same container.  Replicas are used for service load-balancing and/or failover.
+**Stack** is a set of linked **services**.
 
 Cluster initialisation
 ======================
