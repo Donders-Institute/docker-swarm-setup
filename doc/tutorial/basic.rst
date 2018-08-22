@@ -3,9 +3,9 @@ Exercise: the basic
 
 In this exercise, you will build and spin off an Apache HTTPd container with PHP support.  Through it you will learn:
 
-- the docker workflow and basic UI commands,
-- network port exporting,
-- data persistency
+    - the docker workflow and basic UI commands,
+    - network port exporting,
+    - data persistency
 
 Preparation
 ===========
