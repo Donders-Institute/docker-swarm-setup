@@ -1,0 +1,7 @@
+{
+    "restructuredtext.confPath": "${workspaceRoot}/doc",
+    "restructuredtext.linter.extraArgs": [
+        "--ignore D001"
+    ],
+    "editor.wordWrap": "on",
+}
