@@ -105,7 +105,7 @@ Each persistent layer builds on top of the one from the previous step by only ad
 .. figure:: ../figures/container-layers-centos7.png
     :alt: illustration of Docker image and container layers.
 
-    Figure 1: an illustration of Docker image and container layers. This figure is inspired by the `one on the Docker document <https://docs.docker.com/storage/storagedriver/images/container-layers.jpg>`_.
+    an illustration of Docker image and container layers. This figure is inspired by the `one on the Docker document <https://docs.docker.com/storage/storagedriver/images/container-layers.jpg>`_.
 
 Persistent layers are reused when they are encountered in different/independent build processes.  For example, the persistent layer created by the first step (``FROM centos:7``) is very likely to be reused for building a variety of container images based on CentOS 7.  In this case, Docker will reuse the image downloaded before instead of duplicating it for using the host's storage efficiently.
 
@@ -143,5 +143,3 @@ When running the container from a image, Docker creates a new writable layer (a.
     In fact, the way Docker organise deltas in the image layers and the container layer is similar to how the Linux life CD manages the filesystems.  They are both based on a stackable filesystem with the Copy-on-Write (CoW) strategy.
 
 The concept of the image layers and the container layer is illustrated in :numref:`containerlayers`.
-
-
