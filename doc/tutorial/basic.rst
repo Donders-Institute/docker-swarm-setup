@@ -92,16 +92,22 @@ What interesting to see are lines with random hashcodes on them.  For example:
     Removing intermediate container 52daee99ca6c
     ---> cf9a7fe73efc
 
+Image layers
+------------
+
 During the build process, each step in the Dockerfile triggers creation of two image layers.  One intermediate layer for executing the step; the other is a persistent layer containing results of the step.  Those layers are indicated by the hashcodes we see in the output snippet above.
 
 The intermediate layer is always forked from the persistent layer of the previous step, except for the first step. The intermediate layer of the first step is always based on an existing image built somewhere else (a reason that we always see keyword ``FROM`` as the first step in the Dockerfile). After the execution of the step, the corresponding intermediate layer is removed automatically.
 
-Each persistent layer builds on top of the one from the previous step by only adding the "delta" to it. The final container is then a stack of those persisten layers; and they are locked for read-only.
+Each persistent layer builds on top of the one from the previous step by only adding the "delta" to it. The final container is then a stack of those persisten layers; and they are locked for read-only. This concept is illustrated in the lower part of the figure below.
+
+.. _containerlayers:
+.. figure:: ../figures/container-layers-centos7.png
+    :alt: illustration of Docker image and container layers.
+
+    Figure 1: an illustration of Docker image and container layers. This figure is inspired by the `one on the Docker document <https://docs.docker.com/storage/storagedriver/images/container-layers.jpg>`_.
 
 Persistent layers are reused when they are encountered in different/independent build processes.  For example, the persistent layer created by the first step (``FROM centos:7``) is very likely to be reused for building a variety of container images based on CentOS 7.  In this case, Docker will reuse the image downloaded before instead of duplicating it for using the host's storage efficiently.
-
-Image layers
-------------
 
 The image layers of a final docker image can be examinated by the ``docker history <image name:tag>`` command.  For example,
 
@@ -136,11 +142,6 @@ When running the container from a image, Docker creates a new writable layer (a.
 .. note::
     In fact, the way Docker organise deltas in the image layers and the container layer is similar to how the Linux life CD manages the filesystems.  They are both based on a stackable filesystem with the Copy-on-Write (CoW) strategy.
 
-The concept of the image layers and the container layer is illustrated in the picture below.
-
-.. figure:: ../figures/container-layers-centos7.png
-    :alt: illustration of Docker image and container layers.
-
-    Figure 1: an illustration of Docker image and container layers. This figure is inspired by the `one on the Docker document <https://docs.docker.com/storage/storagedriver/images/container-layers.jpg>`_.
+The concept of the image layers and the container layer is illustrated in :numref:`containerlayers`.
 
 
