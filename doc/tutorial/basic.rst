@@ -84,7 +84,7 @@ Here we give the image a *name:tag* with the ``-t`` option.  With that, the imag
 
 Keep your eyes on the output of the build process.  You will find the steps in the Dockerfile are executed sequencially, and some output (e.g. the output from ``yum install``) looks like as if you are running in a CentOS7 system.
 
-What interesting to see are lines with random hashcodes on them.  For example:
+What interesting to notice are lines with random hashcodes on them.  For example:
 
 .. code-block:: none
 
