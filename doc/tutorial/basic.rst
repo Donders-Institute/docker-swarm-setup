@@ -97,7 +97,7 @@ What interesting to notice are lines with hash strings.  For example:
 Image layers
 ------------
 
-During the build process, each step in the Dockerfile triggers creation of two image layers.  One intermediate layer for executing the step; the other is a persistent layer containing results of the step.  Those layers are indicated by the hashcodes we see in the output snippet above.
+During the build process, each step in the Dockerfile triggers creation of two image layers.  One intermediate layer for executing the step; the other is a persistent layer containing results of the step.  Those layers are indicated by the hash strings we see in the output snippet above.
 
 The intermediate layer is always forked from the persistent layer of the previous step, except for the first step. The intermediate layer of the first step is always based on an existing image built somewhere else (a reason that we always see keyword ``FROM`` as the first step in the Dockerfile). After the execution of the step, the corresponding intermediate layer is removed automatically.
 
