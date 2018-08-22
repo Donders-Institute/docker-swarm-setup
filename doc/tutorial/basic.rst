@@ -18,8 +18,8 @@ Download the file for this exercise:
     $ tar xvzf basic.tar.gz
     $ cd basic
 
-The ``Dockerfile``
-==================
+The Dockerfile
+==============
 
 Before starting a container with Docker, we need a docker container image that is either pulled from a image registry (a.k.a. docker registry), such as the `Docker Hub <https://hub.docker.com>`_, or built by ourselves.  In this exercise, we are going to build a container image ourselves.
 
