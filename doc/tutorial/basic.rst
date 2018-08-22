@@ -21,9 +21,11 @@ Download the file for this exercise:
 The ``Dockerfile``
 ==================
 
-Before starting a container with Docker, we need a docker container image that is either provided in a public repository (a.k.a. docker registry), such as `Docker Hub <https://hub.docker.com>`_, or built by ourselves.  For building our own docker image, one should firstly write an instruction document known as the `Dockerfile <https://docs.docker.com/engine/reference/builder/>`_.
+Before starting a container with Docker, we need a docker container image that is either pulled from a image registry (a.k.a. docker registry), such as the `Docker Hub <https://hub.docker.com>`_, or built by ourselves.  In this exercise, we are going to build a container image ourselves.
 
-Dockerfile is a `YAML <https://en.wikipedia.org/wiki/YAML>`_ document describing how a docker container should be built.  Hereafter is an example of building a container for Apache HTTPd:
+For building a docker image, one starts with writing an instruction file known as the `Dockerfile <https://docs.docker.com/engine/reference/builder/>`_.
+
+Dockerfile is a `YAML <https://en.wikipedia.org/wiki/YAML>`_ document describing how a docker container should be built.  Hereafter is an example of the Dockerfile for an Apache HTTPd image:
 
 .. _dockerfile-httpd:
 
@@ -33,8 +35,8 @@ Dockerfile is a `YAML <https://en.wikipedia.org/wiki/YAML>`_ document describing
     FROM centos:7
     MAINTAINER The CentOS Project <cloud-ops@centos.org>
     LABEL Vendor="CentOS" \
-        License=GPLv2 \
-        Version=2.4.6-40
+          License=GPLv2 \
+          Version=2.4.6-40
 
 
     RUN yum -y --setopt=tsflags=nodocs update && \
@@ -49,25 +51,25 @@ Dockerfile is a `YAML <https://en.wikipedia.org/wiki/YAML>`_ document describing
 
     CMD ["/run-httpd.sh"]
 
-The Dockerfile above is explained below:
+The Dockerfile above is explained below.
 
 Each line of the Dockerfile is taken as a *step* of the build.  It started with a **keyword** followed by **argument(s)**.
 
-**Line 1:** All container images are built from a basis image.  This is indicated by the ``FROM`` keyword. In this example, the basis image is the official CentOS 7 image from the public docker repository.
+**Line 1:** All container images are built from a basis image.  This is indicated by the ``FROM`` keyword. In this example, the basis image is the official CentOS 7 image from the Docker Hub.
 
 **Line 2-3:** a container image can be created with metadata.  For instance, the ``MAINTAINER`` and ``LABEL`` attributes are provided in the example.
 
-**Line 8-10:** since we want to build a image for running the HTTPd server, we uses the YUM package manager to install the ``httpd`` package within the container; and it is done by using the ``RUN`` keyword.
+**Line 8-10:** given that we want to build a image for running the Apache HTTPd server, we uses the YUM package manager to install the ``httpd`` package within the container.  It is done by using the ``RUN`` keyword followed by the actual YUM command.
 
-**Line 12:** we know that the HTTPd service will run on port number 80, we asked the container to expose that port.
+**Line 12:** we know that the HTTPd service will run on port number 80, we expose that port explicitly for the connectivity.
 
 **Line 14:** comments in Dockerfile are started with the ``#``.
 
-**Line 15:** the `run-httpd.sh <https://raw.githubusercontent.com/Donders-Institute/docker-swarm-setup/master/doc/tutorial/centos-httpd/basic/run-httpd.sh>`_ file is something we want to add from the host machine into the container image, as it is a script for bootstraping the HTTPd service after the container is started.  Thus, we make use of the ``ADD`` keyword here for *copying the file "run-httpd.sh" on the host into the root directory (i.e. /run-httpd.sh) of the container image*.
+**Line 15:** the `run-httpd.sh <https://raw.githubusercontent.com/Donders-Institute/docker-swarm-setup/master/doc/tutorial/centos-httpd/basic/run-httpd.sh>`_ is a script for bootstraping the HTTPd service after the container is started. In order to make this script available in the image, we make use of the ``ADD`` keyword here for *adding the file "run-httpd.sh" on the host into the root directory (i.e. /run-httpd.sh) of the container image*.
 
 **Line 16:** here we make the HTTPd bootstrap script executable so that it can be run within the container.  It is done using the ``RUN`` keyword again.
 
-**Line 18:** the keyword ``CMD`` specifies the command to run when the container is started.  Here we want to run the bootstrap script we have just copied into the container.
+**Line 18:** the keyword ``CMD`` specifies the command to be run when the container is started.  Here we simply run the bootstrap script we have just added into the container.
 
 Building the container image
 ============================
@@ -103,9 +105,9 @@ Each persistent layer builds on top of the one from the previous step by only ad
 
 .. _containerlayers:
 .. figure:: ../figures/container-layers-centos7.png
-    :alt: illustration of Docker image and container layers.
+    :alt: illustration of the Docker image and container layers.
 
-    an illustration of Docker image and container layers. This figure is inspired by the `one on the Docker document <https://docs.docker.com/storage/storagedriver/images/container-layers.jpg>`_.
+    an illustration of the Docker image and container layers. This figure is inspired by the `one on the Docker document <https://docs.docker.com/storage/storagedriver/images/container-layers.jpg>`_.
 
 Persistent layers are reused when they are encountered in different/independent build processes.  For example, the persistent layer created by the first step (``FROM centos:7``) is very likely to be reused for building a variety of container images based on CentOS 7.  In this case, Docker will reuse the image downloaded before instead of duplicating it for using the host's storage efficiently.
 
