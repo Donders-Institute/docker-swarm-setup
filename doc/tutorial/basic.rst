@@ -10,10 +10,12 @@ In this exercise, you will build and spin off an Apache HTTPd container with PHP
 Preparation
 ===========
 
-Download the file for this exercise:
+Preparing the files for this exercise within the ``~/tmp`` by following the commands below:
 
 .. code-block:: bash
 
+    $ mkdir -p ~/tmp
+    $ cd ~/tmp
     $ wget https://github.com/Donders-Institute/docker-swarm-setup/raw/master/doc/tutorial/centos-httpd/basic.tar.gz
     $ tar xvzf basic.tar.gz
     $ cd basic
@@ -261,25 +263,22 @@ Bind mounts
 
 *Bind mount* is another way of keeping container data persistent by binding host's filesystem structure into the container.
 
-Assuming we have a ``htmldoc`` directory on the host's filesystem, and there is a file ``index.html`` in this directory.
+In the files you downloaded to the host you are working on, there is a directory called ``htmldoc``.  In this directory, we have prepared our ``index.html`` file.
 
 .. code-block:: bash
 
-    $ pwd
-    /home/honlee/tmp/basic/htmldoc
-    $ ls
-    index.html
+    $ ls ~/tmp/basic/htmldoc
+    hello.php index.html
 
-We can then bind the directory ``/home/honlee/tmp/basic/htmldoc`` into the container's ``/var/www/html`` directory when starting the contianer.  The ``index.html`` file will then appear as ``/var/www/html/index.html`` within the container.  Use the following command:
+By binding the directory ``~/basic/htmldoc`` into the container's ``/var/www/html`` directory, the ``index.html`` file will appear as ``/var/www/html/index.html`` in the container.  This is done by the following command at the time of starting the container:
 
 .. code-block:: bash
     :linenos:
 
     $ docker stop myhttpd
     $ docker run -rm -d -p 8080:80 \
-    -v /home/honlee/tmp/basic/htmldoc:/var/www/html \
+    -v ~/tmp/basic/htmldoc:/var/www/html \
     --name myhttpd httpd:centos
 
-
 .. hint::
-    While doing the bind mounts in the container, the benefit is that one can change the files on the host and the changes will take effect right in the container.
+    While doing the bind mounts in the container, the benefit is that one can change the files on the host and the changes will take effect right in the container.  In addition, if new files are created in the container, they will also appear on the host.
