@@ -103,7 +103,7 @@ Image layers
 
 During the build process, each step in the Dockerfile triggers creation of two image layers.  One intermediate layer for executing the step; the other is a persistent layer containing results of the step.  Those layers are indicated by the hash strings we see in the output snippet above.
 
-The intermediate layer is forked from the persistent layer of the previous step, except for the first step in which the persistent image is from an existing one built somewhere else (a reason that we always see keyword ``FROM`` as the first step in the Dockerfile). The intermediate layer is removed after the execution of the step.
+The intermediate layer is forked from the persistent layer of the previous step, except for the first step on which the persistent image is always from an existing image built somewhere else (a reason that we always see keyword ``FROM`` as the first step in the Dockerfile). The intermediate layer is removed after the execution of the step.
 
 Each persistent layer only consists of the "delta" to the one from its previous step. As illustrated in :numref:`containerlayers`, the final image is then constructed as a stack of those persisten layers; and it is locked for read-only.
 
