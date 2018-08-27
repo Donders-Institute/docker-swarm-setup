@@ -152,13 +152,13 @@ When running the container from a image, Docker creates a new writable layer (a.
 
 The concept of the image layers and the container layer is illustrated in :numref:`containerlayers`.
 
-Exercise: PHP support
----------------------
+Exercise: PHP with MySQL support
+--------------------------------
 
-Can you extend/modify the ``Dockerfile`` and build a image called ``php:centos`` to support PHP in the Apache HTTPd server?
+Can you extend/modify the ``Dockerfile`` and build a image called ``php:centos``?  In this image, we want to add PHP with MySQL support to the Apache HTTPd server.
 
 .. hint::
-    Normally you can just run ``yum -y install php`` in CentOS to add PHP support to the Apache HTTPd server.
+    Normally you can just run ``yum -y install php php-mysql`` in CentOS to add PHP support to the Apache HTTPd server.
     
     To verify the PHP support, you can create a file ``/var/www/html/index.php`` in the container, and visit the page `http://localhost:8080/index.php <http://localhost:8080/index.php>`_.  Hereafter is an example:
 
