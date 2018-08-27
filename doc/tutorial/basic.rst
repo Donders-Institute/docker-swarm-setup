@@ -10,7 +10,7 @@ This tutorial is based on an example of building and running a container of the 
 Preparation
 ===========
 
-Preparing the files for this exercise within the ``~/tmp`` by following the commands below:
+Files used in this tutorial are available on GitHub. Preparing those files within the ``~/tmp`` using the commands below:
 
 .. code-block:: bash
 
@@ -19,6 +19,8 @@ Preparing the files for this exercise within the ``~/tmp`` by following the comm
     $ wget https://github.com/Donders-Institute/docker-swarm-setup/raw/master/doc/tutorial/centos-httpd/basic.tar.gz
     $ tar xvzf basic.tar.gz
     $ cd basic
+    $ ls
+    Dockerfile  Dockerfile_php  htmldoc  run-httpd.sh
 
 The Dockerfile
 ==============
@@ -76,7 +78,7 @@ Each line of the Dockerfile is taken as a *step* of the build.  It started with 
 Building the container image
 ============================
 
-Make sure you are in the ``basic`` folder, and run the following command:
+With the Dockerfile in place, we can proceed for building the container image. Make sure you are in the ``basic`` folder, and run the following command:
 
 .. code-block:: bash
 
