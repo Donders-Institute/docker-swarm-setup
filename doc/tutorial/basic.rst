@@ -162,7 +162,7 @@ Can you extend/modify the ``Dockerfile`` and build a image called ``php:centos``
     
     To verify the PHP support, you can create a file ``/var/www/html/index.php`` in the container, and visit the page `http://localhost:8080/index.php <http://localhost:8080/index.php>`_.  Hereafter is an example:
 
-    .. code-block::bash
+    .. code-block:: bash
 
         $ docker exec -it myhttpd bash
         $ cat > /var/www/html/index.php <<EOF
