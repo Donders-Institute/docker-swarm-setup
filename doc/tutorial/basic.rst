@@ -280,5 +280,6 @@ We can then bind the directory ``/home/honlee/tmp/basic/htmldoc`` into the conta
     -v /home/honlee/tmp/basic/htmldoc:/var/www/html \
     --name myhttpd httpd:centos
 
-.. hint:
+
+.. hint::
     While doing the bind mounts in the container, the benefit is that one can change the files on the host and the changes will take effect right in the container.
