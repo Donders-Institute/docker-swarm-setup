@@ -126,6 +126,8 @@ With the image built successfully, we can now start a container with the image u
 
     $ docker run --rm -d -p 8080:80 --name myhttpd httpd:centos
 
+Let's connect the browser to the URL `http://localhost:8080 <http://localhost:8080>`_.  You will see a default welcome page of the Apache HTTPd server.
+
 A few options are used here:
 
 Option ``--rm`` instructs Docker to remove the container when the container is stopped.
@@ -145,3 +147,138 @@ When running the container from a image, Docker creates a new writable layer (a.
     In fact, the way Docker organise deltas in the image layers and the container layer is similar to how the Linux life CD manages the filesystems.  They are both based on a stackable filesystem with the Copy-on-Write (CoW) strategy.
 
 The concept of the image layers and the container layer is illustrated in :numref:`containerlayers`.
+
+Data persistency
+================
+
+The default welcome page of the Apache HTTPd is boring.  We are going to create our own homepage.
+
+Let's access to the bash shell of the running httpd container:
+
+.. code-block:: bash
+
+    $ docker exec -it myhttpd bash
+    $ hostname
+
+In Apache HTTPd, the way to replace the default homepage is creating our own ``index.html`` file within the folder ``/var/www/html``.  For example, using the command below to create a HTML form in ``/var/www/html/index.html``:
+
+.. code-block:: bash
+
+    $ cat > /var/www/html/index.html <<EOF
+    <html>
+    <head></head>
+    <body>
+    <h2>Welcome to my first HTML page served by Docker</h2>
+    <form action="hello.php" method="POST">
+        Your name: <input type="text" name="name"></br>
+        Your email: <input type="text" name="email"></br>
+    <input value="submit" name="submit" type="submit">
+    </form>
+    </body>
+    </html>
+    EOF
+
+If you revisit the page `http://localhost:8080 <http://localhost:8080>`_, you will see the new homepage we just created.
+
+Now imaging that we have to restart the container for a reason.  For that, we do:
+
+.. code-block:: bash
+
+    $ docker stop myhttpd
+    $ docker run --rm -d -p 8080:80 --name myhttpd httpd:centos
+
+Try connect to the page `http://localhost:8080 <http://localhost:8080>`_ again with the browser. **Do you see the homepage we just added to the container?**
+
+.. hint::
+    Changes made in the container are stored in the container layer which is only available during the container's lifetime.  When you stop the container, the container layer is removed from the host and thus the data in this layer is **NOT** persistent.
+
+Volumes
+-------
+
+One way to persistent container data is using the so-called *volumes*. Volumes is managed by Docker and thus it is more portable and manageable.
+
+For the example above, we could create a volume in Docker as
+
+.. code-block:: bash
+
+    $ docker volume create htmldoc
+
+.. hint::
+    One could use ``docker volume ls`` and ``docker volume inspect`` to list and inspect detail of a Docker volume.
+
+When the volume is available, one could map the volume into the container's path ``/var/www/html``, using the ``-v`` option (i.e. line 3 in the commands below).
+
+.. code-block:: bash
+    :linenos:
+
+    $ docker stop myhttpd
+    $ docker run -rm -d -p 8080:80 \
+    -v htmldoc:/var/www/html \
+    --name myhttpd httpd:centos
+
+Now get into the shell of the container, and create our own ``index.html`` again:
+
+.. code-block:: bash
+
+    $ docker exec -it myhttpd bash
+    $ cat > /var/www/html/index.html <<EOF
+    <html>
+    <head></head>
+    <body>
+    <h2>Welcome to my first HTML page served by Docker</h2>
+    <form action="hello.php" method="POST">
+        Your name: <input type="text" name="name"></br>
+        Your email: <input type="text" name="email"></br>
+    <input value="submit" name="submit" type="submit">
+    </form>
+    </body>
+    </html>
+    EOF
+    $ exist
+
+Check if the new ``index.html`` is in place by reloading the page `http://localhost:8080 <http://localhost:8080>`_.
+
+Restart the container again:
+
+.. code-block:: bash
+
+    $ docker stop myhttpd
+    $ docker run -rm -d -p 8080:80 \
+    -v htmldoc:/var/www/html \
+    --name myhttpd httpd:centos
+
+You should see the new ``index.html`` page is still available after restarting the container.
+
+If you want to start from the scratch without any container data, one can simply remove the volume followed by creating a new one.
+
+.. code-block:: bash
+
+    $ docker volume rm htmldoc
+    $ docker volume create htmldoc
+
+Bind mounts
+-----------
+
+*Bind mount* is another way of keeping container data persistent by binding host's filesystem structure into the container.
+
+Assuming we have a ``htmldoc`` directory on the host's filesystem, and there is a file ``index.html`` in this directory.
+
+.. code-block:: bash
+
+    $ pwd
+    /home/honlee/tmp/basic/htmldoc
+    $ ls
+    index.html
+
+We can then bind the directory ``/home/honlee/tmp/basic/htmldoc`` into the container's ``/var/www/html`` directory when starting the contianer.  The ``index.html`` file will then appear as ``/var/www/html/index.html`` within the container.  Use the following command:
+
+.. code-block:: bash
+    :linenos:
+
+    $ docker stop myhttpd
+    $ docker run -rm -d -p 8080:80 \
+    -v /home/honlee/tmp/basic/htmldoc:/var/www/html \
+    --name myhttpd httpd:centos
+
+.. hint:
+    While doing the bind mounts in the container, the benefit is that one can change the files on the host and the changes will take effect right in the container.
