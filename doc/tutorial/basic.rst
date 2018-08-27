@@ -1,4 +1,4 @@
-Tutorial: the basic
+Tutorial: basic
 *******************
 
 This tutorial is based on an example of building and running a container of the Apache HTTPd server which serves a simple PHP-based helloworld application. Throught the tutorial you will learn:
