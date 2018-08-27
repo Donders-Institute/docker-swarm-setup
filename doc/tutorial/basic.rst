@@ -311,4 +311,4 @@ By binding the directory ``~/basic/htmldoc`` into the container's ``/var/www/htm
 Exercise: preserving HTTPd's log files
 --------------------------------------
 
-We know that the log files of the Apache HTTPd server is located in ``/var/log/httpd``.  How do you make those log files persistent?
+We know that the log files of the Apache HTTPd server are located in ``/var/log/httpd``.  How do you make those log files persistent?
