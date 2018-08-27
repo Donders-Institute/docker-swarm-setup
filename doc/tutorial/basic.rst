@@ -157,6 +157,12 @@ Exercise: PHP with MySQL support
 
 Can you extend/modify the ``Dockerfile`` and build a image called ``php:centos``?  In this image, we want to add PHP with MySQL support to the Apache HTTPd server.
 
+The container should be started with
+
+.. code-block:: bash
+
+    $ docker run --rm -d -p 8080:80 --name myphp php:centos
+
 .. hint::
     In a CentOS system, one can just run ``yum -y install php php-mysql`` to add PHP with MySQL support to the Apache HTTPd server.
     
@@ -164,7 +170,7 @@ Can you extend/modify the ``Dockerfile`` and build a image called ``php:centos``
 
     .. code-block:: bash
 
-        $ docker exec -it myhttpd bash
+        $ docker exec -it myphp bash
         $ cat > /var/www/html/index.php <<EOF
         <?php phpinfo(); ?>
         EOF
