@@ -307,3 +307,8 @@ By binding the directory ``~/basic/htmldoc`` into the container's ``/var/www/htm
 
 .. hint::
     While doing the bind mounts in the container, the benefit is that one can change the files on the host and the changes will take effect right in the container.  In addition, if new files are created in the container, they will also appear on the host.
+    
+Exercise: preserving HTTPd's log files
+--------------------------------------
+
+We know that the log files of the Apache HTTPd server is located in ``/var/log/httpd``.  How do you make those log files persistent?
