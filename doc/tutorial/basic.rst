@@ -206,7 +206,7 @@ For the example above, we could create a volume in Docker as
 .. hint::
     One could use ``docker volume ls`` and ``docker volume inspect`` to list and inspect detail of a Docker volume.
 
-When the volume is available, one could map the volume into the container's path ``/var/www/html``, using the ``-v`` option (i.e. line 3 in the commands below).
+When the volume is available, one could map the volume into the container's path ``/var/www/html``, using the ``-v`` option (i.e. line 3 of the command block below) at the time of starting the container.
 
 .. code-block:: bash
     :linenos:
@@ -247,7 +247,7 @@ Restart the container again:
     -v htmldoc:/var/www/html \
     --name myhttpd httpd:centos
 
-You should see the new ``index.html`` page is still available after restarting the container.
+You should see that our own ``index.html`` page is still available after restarting the container.
 
 If you want to start from the scratch without any container data, one can simply remove the volume followed by creating a new one.
 
