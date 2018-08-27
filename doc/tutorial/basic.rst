@@ -1,7 +1,7 @@
-Exercise: the basic
+Tutorial: the basic
 *******************
 
-In this exercise, you will build and spin off an Apache HTTPd container with PHP support.  Through it you will learn:
+This tutorial is based on an example of building and running a container of the Apache HTTPd server which serves a simple PHP-based helloworld application. Throught the tutorial you will learn:
 
 - the docker workflow and basic UI commands,
 - network port exporting,
