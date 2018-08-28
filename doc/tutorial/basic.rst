@@ -134,7 +134,7 @@ Let's connect the browser to the URL `http://localhost:8080 <http://localhost:80
 
 A few options are used here:
 
-Option ``--rm`` instructs Docker to remove the container when the container is stopped.
+Option ``--rm`` instructs Docker to remove the container layer (see below) when the container is stopped.
 
 Option ``-d`` instructs Docker to run the container in a detached mode.
 
