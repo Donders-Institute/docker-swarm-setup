@@ -175,6 +175,22 @@ The container should be started with
         <?php phpinfo(); ?>
         EOF
 
+Network port mapping
+====================
+
+Networkk port mapping is the way of making the container service accessible to the network of the host.
+
+In the Dockerfile example above, we explicitly expose the port ``80`` as we know that the HTTPd will listen on this TCP port.
+
+However, the container runs in an internal virtual network, meaning that our HTTPd service is not accessible from the network on which the host is running.
+
+To make the service accessible externally, one uses the ``-p`` option to map the host's port to the container's port.  For instance, the option ``-p 8080:80`` implies that if the client connects to the port ``8080`` of the host, the connection will be redirected to the port ``80`` of the container.
+
+Exercise: network
+-----------------
+
+How do you make the HTTPd container accessible on port ``80``?
+
 Data persistency
 ================
 
