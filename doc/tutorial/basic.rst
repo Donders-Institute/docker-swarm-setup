@@ -69,11 +69,11 @@ Each line of the Dockerfile is taken as a *step* of the build.  It started with 
 
 **Line 14:** comments in Dockerfile are started with the ``#``.
 
-**Line 15:** the `run-httpd.sh <https://raw.githubusercontent.com/Donders-Institute/docker-swarm-setup/master/doc/tutorial/centos-httpd/basic/run-httpd.sh>`_ is a script for bootstraping the HTTPd service after the container is started. In order to make this script available in the image, we make use of the ``ADD`` keyword here for *adding the file "run-httpd.sh" on the host into the root directory (i.e. /run-httpd.sh) of the container image*.
+**Line 15:** the `run-httpd.sh <https://raw.githubusercontent.com/Donders-Institute/docker-swarm-setup/master/doc/tutorial/centos-httpd/basic/run-httpd.sh>`_ is a script for bootstraping the HTTPd service.  It is the main program to be executed after the container is started. In order to make this script available in the image, we use the ``ADD`` keyword here.  The example here can be interpreted as *copying the file "run-httpd.sh" on the host to file "/run-http.sh" in the container image*.
 
-**Line 16:** here we make the HTTPd bootstrap script executable so that it can be run within the container.  It is done using the ``RUN`` keyword again.
+**Line 16:** here we make the bootstrap script in the container image executable so that it can be run directly.  It is done using the ``RUN`` keyword again.
 
-**Line 18:** the keyword ``CMD`` specifies the command to be run when the container is started.  Here we simply run the bootstrap script we have just added into the container.
+**Line 18:** the keyword ``CMD`` specifies the command to be executed when the container is started.  Here we simply run the bootstrap script we have just copied into the container.
 
 Building the container image
 ============================
