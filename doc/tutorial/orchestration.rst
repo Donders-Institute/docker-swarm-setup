@@ -237,13 +237,18 @@ Save the file as ``docker-compose.lb.yml`` in the ``~/tmp/orchestration`` direct
     $ docker-compose -f docker-compose.lb.yml build --force-rm
     $ docker-compose -f docker-compose.lb.yml up
 
-Try connecting to `http://localhost:8080 <http://localhost:8080>`_.  You should see the same user registration application.  Here we are not accessing the web service directory; but via the HAProxy.
+Try connecting to `http://localhost:8080 <http://localhost:8080>`_.  You should see the same user registration application.  The difference is that we are now accessing the web service through the HAProxy.
 
-With this setting, we can now scale up the web service whenever there is a load on it. For example, to create 2 the instances of the web service, one does:
+With this setting, we can now scale up the web service whenever there is a load. For example, to create 2 loadbalancing instances of the web service, one does:
 
 .. code-block:: bash
 
     $ docker-compose -f docker-compose.lb.yml scale web=2
+
+Check the running processes with
+
+.. code-block:: bash
+
     $ docker-compose -f docker-compose.lb.yml ps
            Name                      Command               State                   Ports
     ----------------------------------------------------------------------------------------------------
