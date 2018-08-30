@@ -51,7 +51,7 @@ Container orchestration is to manage multiple containers in a controlled manner 
 
 aabbcc
 
-.. code-block:: none
+.. code-block:: dockerfile
 
     version: '3.1'
 
