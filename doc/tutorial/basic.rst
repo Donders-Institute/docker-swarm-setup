@@ -1,3 +1,5 @@
+.. _tutorial-basic:
+
 Tutorial: basic
 *******************
 
@@ -107,8 +109,8 @@ The intermediate layer is forked from the persistent layer of the previous step,
 
 Each persistent layer only consists of the "delta" to the one from its previous step. As illustrated in :numref:`containerlayers`, the final image is then constructed as a stack of those persisten layers; and it is locked for read-only.
 
-.. _containerlayers:
 .. figure:: ../figures/container-layers-centos7.png
+    :name: containerlayers
     :alt: illustration of the Docker image and container layers.
 
     an illustration of the Docker image and container layers. This figure is inspired by the `one on the Docker document <https://docs.docker.com/storage/storagedriver/images/container-layers.jpg>`_.

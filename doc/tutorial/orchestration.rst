@@ -36,15 +36,15 @@ Files used in this tutorial are available on GitHub. Preparing those files withi
 
 .. important::
 
-    In order to make the following commands in this tutorial work, you also need to prepare the files we used in the `Tutorial: basic`_ section.
+    In order to make the following commands in this tutorial work, you also need to prepare the files we used in the :ref:`tutorial-basic` section.
 
 The docker-compose file
 =======================
 
-Container orchestration is to manage multiple containers in a controlled manner so that they work together as a set of integrated components.  The docker-compose file is to describe the containers and their relationship in the stack.  The docker-compose file is also written in `YAML <https://en.wikipedia.org/wiki/YAM>`_. Hereafter is the docker-compose file for our user registration application.  The service architecture it represented is shown in :numref:`servicearchitecture`.
+Container orchestration is to manage multiple containers in a controlled manner so that they work together as a set of integrated components.  The docker-compose file is to describe the containers and their relationship in the stack.  The docker-compose file is also written in `YAML <https://en.wikipedia.org/wiki/YAM>`_. Hereafter is the docker-compose file for our user registration application.  The service architecture it represented is shown in :numref:`apparchitecture`.
 
-.. _servicearchitecture:
 .. figure:: ../figures/app-service-architecture.png
+    :name: apparchitecture
     :alt: illustration of the service architecture implemented by the docker-compose file in this tutorial.
 
     an illustration of the service architecture implemented by the docker-compose file used in this tutorial.
