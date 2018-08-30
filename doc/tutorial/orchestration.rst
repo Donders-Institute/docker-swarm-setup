@@ -46,7 +46,7 @@ Container orchestration is to manage multiple containers in a controlled manner 
 .. tip::
     The filename of the docker-compose file is usually ``docker-compose.yml`` as it is the default the ``docker-compose`` tool looks up in the directory.
 
-.. code-block:: none
+.. code-block:: yaml
     :linenos:
 
     version: '3.1'
