@@ -183,7 +183,7 @@ Step 1: add service ``dockercloud/haproxy``
 The HAProxy we are going to use is customised by DockerCloud, and is available `here <https://hub.docker.com/r/dockercloud/haproxy/>`_.  Adding the following content into the ``services`` sector of the original ``docker-compose.yml`` file.
 
 .. tip::
-    In many chances you will use existing container images on Docker Hub.  It is always necessary to know the usage by reading through the documenation of the image.
+    In real-world situation, it is very often to use existing container images from the Docker Hub.  It is a good practise to read the usage of the container image before using it.
 
 .. code-block:: yaml
     :linenos:
