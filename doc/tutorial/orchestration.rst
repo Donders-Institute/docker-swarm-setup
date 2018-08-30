@@ -114,7 +114,7 @@ When the service stack has a container based on local image build (e.g. the ``we
 
 .. tip::
 
-    The command above will loads the ``docker-compose.yml`` file in the current directory.  If you have a different filename/location for your docker-compose file, add the ``-f <filepath>`` option to the command.
+    The command above will loads the ``docker-compose.yml`` file in the current directory.  If you have a different filename/location for your docker-compose file, add the ``-f <filepath>`` option in front of the ``build`` command.
 
 Bringing services up
 ====================
@@ -162,3 +162,99 @@ Bringing services down
     $ docker-compose down
     Stopping orchestration_web_1 ...
     Stopping orchestration_db_1  ...
+    Removing orchestration_web_1 ... done
+    Removing orchestration_db_1  ... done
+    Removing network orchestration_dbnet
+
+Exercise: HAProxy
+=================
+
+In this exercise, you are going to update the docker-compose file to add on top of the web service a HAProxy loadbalancer.  The overall architecture looks like the figure below:
+
+.. figure:: ../figures/app-service-architecture-lb.png
+    :name: apparchitecturelb
+    :alt: illustration of the service architecture with HAProxy as the loadbalancer.
+
+    an illustration of the service architecture with HAProxy as the loadbalancer.
+
+Step 1: add service ``dockercloud/haproxy``
+-------------------------------------------
+
+The HAProxy we are going to use is customised by DockerCloud, and is available `here <https://hub.docker.com/r/dockercloud/haproxy/>`_.  Adding the following content into the ``services`` sector of the original ``docker-compose.yml`` file.
+
+.. tip::
+    In many chances you will use existing container images on Docker Hub.  It is always necessary to know the usage by reading through the documenation of the image.
+
+.. code-block:: yaml
+    :linenos:
+
+    lb:
+        image: dockercloud/haproxy
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        links:
+            - web
+        ports:
+            - 8080:80
+        depends_on:
+            - web
+        networks:
+            - lbnet
+
+Step 2: adjust ``web`` service
+------------------------------
+
+Task 1
+^^^^^^
+
+From the documentation of the ``dockercloud/haproxy``, it requires services attached to the proxy to set an environment variable ``SERVICE_PORT``.  The ``SERVICE_PORT`` of the ``web`` service is 80.
+
+Could you modify the docker-compose file accordingly for it?
+
+Task 2
+^^^^^^
+
+Instead of mapping host port 8080 to container port 80, we just need to join the ``web`` service into the network of the loadbalancer.
+
+Could you modify the docker-compose file accordingly for it?
+
+Step 3: adding ``lbnet`` network
+--------------------------------
+
+We have made use of the network ``lbnet``; but we haven't ask the docker-compose to create it.
+
+Could you modify the docker-compose file accordingly so that the network ``lbnet`` is created when bring up the services?
+
+Service scaling
+---------------
+
+The final docker-compose file is available `here <https://github.com/Donders-Institute/docker-swarm-setup/blob/master/doc/tutorial/centos-httpd/orchestration/docker-compose.lb.yml>`_.
+
+Save the file as ``docker-compose.lb.yml`` in the ``~/tmp/orchestration`` directory; and do the following to start the services:
+
+.. code-block:: bash
+
+    $ docker-compose -f docker-compose.lb.yml build --force-rm
+    $ docker-compose -f docker-compose.lb.yml up
+
+Try connecting to `http://localhost:8080 <http://localhost:8080>`_.  You should see the same user registration application.  Here we are not accessing the web service directory; but via the HAProxy.
+
+With this setting, we can now scale up the web service whenever there is a load on it. For example, to create 2 the instances of the web service, one does:
+
+.. code-block:: bash
+
+    $ docker-compose -f docker-compose.lb.yml scale web=2
+    $ docker-compose -f docker-compose.lb.yml ps
+           Name                      Command               State                   Ports
+    ----------------------------------------------------------------------------------------------------
+    orchestration_db_1    docker-entrypoint.sh --def ...   Up      3306/tcp, 33060/tcp
+    orchestration_lb_1    /sbin/tini -- dockercloud- ...   Up      1936/tcp, 443/tcp,0.0.0.0:8080->80/tcp
+    orchestration_web_1   /run-httpd.sh                    Up      80/tcp
+    orchestration_web_2   /run-httpd.sh                    Up      80/tcp
+
+You should see two web services running on port 80.  You could try the followng curl command to check whether the loadbalancer does its job well:
+
+.. code-block:: bash
+
+    $ for i in {1..10}; do curl http://localhost:8080 2>/dev/null \
+    | grep 'Served by host'; done
