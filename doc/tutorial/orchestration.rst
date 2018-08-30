@@ -218,8 +218,8 @@ Instead of mapping host port 8080 to container port 80, we just need to join the
 
 Could you modify the docker-compose file accordingly for it?
 
-Step 3: adding ``lbnet`` network
---------------------------------
+Step 3: add ``lbnet`` network
+-----------------------------
 
 We have made use of the network ``lbnet``; but we haven't ask the docker-compose to create it.
 
