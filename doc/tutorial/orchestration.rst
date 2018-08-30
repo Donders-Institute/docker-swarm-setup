@@ -51,8 +51,7 @@ Container orchestration is to manage multiple containers in a controlled manner 
 
 aabbcc
 
-.. code-block:: yaml
-    :linenos:
+.. code-block:: none
 
     version: '3.1'
 
