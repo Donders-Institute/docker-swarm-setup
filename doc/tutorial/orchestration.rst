@@ -49,9 +49,7 @@ Container orchestration is to manage multiple containers in a controlled manner 
 
     an illustration of the service architecture implemented by the docker-compose file used in this tutorial.
 
-aabbcc
-
-.. code-block:: dockerfile
+.. code-block:: none
 
     version: '3.1'
 
@@ -87,5 +85,3 @@ aabbcc
                 - 8080:80
             depends_on:
                 - db
-
-Aabbcc
