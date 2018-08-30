@@ -180,10 +180,7 @@ In this exercise, you are going to update the docker-compose file to add on top 
 Step 1: add service ``dockercloud/haproxy``
 -------------------------------------------
 
-The HAProxy we are going to use is customised by DockerCloud, and is available `here <https://hub.docker.com/r/dockercloud/haproxy/>`_.  Adding the following content into the ``services`` sector of the original ``docker-compose.yml`` file.
-
-.. tip::
-    In real-world situation, it is very often to use existing container images from the Docker Hub.  It is a good practise to read the usage of the container image before using it.
+The HAProxy we are going to use is customised by DockerCloud, and is available `here <https://hub.docker.com/r/dockercloud/haproxy/>`_.  Adding the following service description into the ``docker-compose.yml`` file.
 
 .. code-block:: yaml
     :linenos:
@@ -200,6 +197,9 @@ The HAProxy we are going to use is customised by DockerCloud, and is available `
             - web
         networks:
             - lbnet
+
+.. tip::
+    In real-world situation, it is very often to use existing container images from the Docker Hub.  It is a good practise to read the usage of the container image before using it.
 
 Step 2: adjust ``web`` service
 ------------------------------
