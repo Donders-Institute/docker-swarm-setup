@@ -103,8 +103,8 @@ Another service ``db`` uses `the official MySQL image from the Docker Hub <https
 
 The ``db`` service has two bind-mounted volumes.  The ``./init.d`` directory on host is bind-mounted to the ``/docker-entrypoint-initdb.d`` directory in the container as we will make use the bootstrap mechanism provided by the container to create a database schema for the ``registry`` database; while the ``./data`` is bind-mounted to ``/var/lib/mysql`` for preserving the data in the MySQL database.  The ``db`` service is also joint into the ``dbnet`` network so that it becomes accessible to the ``web`` service.
 
-Building up service stack
-=========================
+Building services
+=================
 
 When the service stack has a container based on local image build (e.g. the ``web`` service in our example), it is necessary to build the container via the docker-compose tool.  For that, one can do:
 
@@ -116,8 +116,8 @@ When the service stack has a container based on local image build (e.g. the ``we
 
     The command above will loads the ``docker-compose.yml`` file in the current directory.  If you have a different filename/location for your docker-compose file, add the ``-f <filepath>`` option to the command.
 
-Bring up service stack
-======================
+Bringing services up
+====================
 
 Once the docker-compose file is reasy, bring the whole service stack up is very simple.  Just do:
 
@@ -154,8 +154,8 @@ The services may produce logs to its STDOUT/STDERR.  Those logs can be monitored
 
 where the option ``-f`` follows the output on STDOUT/STDERR.
 
-Bring down service stack
-========================
+Bringing services down
+======================
 
 .. code-block:: bash
 
