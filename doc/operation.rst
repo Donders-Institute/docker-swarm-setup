@@ -224,12 +224,14 @@ To start a service in the cluster, one uses the ``docker service create`` comman
 .. code-block:: bash
     :linenos:
 
+    $ docker login docker-registry.dccn.nl:5000
     $ docker service create \
     --name webapp-proxy \
     --replicas 2 \
     --publish 8080:80/tcp \
     --constaint "node.labels.function == production" \
     --mount "type=bind,source=/mnt/docker/webapp-proxy/conf,target=/etc/nginx/conf.d" \
+    --with-registry-auth \
     docker-registry.dccn.nl:5000/nginx:1.0.0
 
 Options used above is explained in the following table:
@@ -320,7 +322,8 @@ Assuming the docker-compose file is called ``docker-compose.yml``, to launch the
 
 .. code-block:: bash
 
-    $ docker stack deploy -c docker-compose.yml <StackName>
+    $ docker login docker-registry.dccn.nl
+    $ docker stack deploy -c docker-compose.yml --with-registry-auth <StackName>
 
 When there is an update in the stack description file (e.g. ``docker-compose.yml``), one can use the same command to apply changes on the running stack.
 
