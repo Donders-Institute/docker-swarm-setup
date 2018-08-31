@@ -20,7 +20,9 @@ Image registry
 
 Within the swarm cluster, a private image registry is provided to as a central repository of all container images. The data store of the registry is located in ``/mnt/docker/registry`` which is a shared NFS volume on the central storage.
 
-The registry endpoint is ``docker-registry.dccn.nl:5000``. An overview of repository images can be seen `here <http://docker-registry.dccn.nl>`_.
+The registry endpoint is ``docker-registry.dccn.nl:5000``. It requires user authentication for uploading (push) and downloading (pull) container images.  New user can be added by using the script ``/mnt/docker/scripts/microservices/registry/add-user.sh``.
+
+An overview of image repositories can be browsed `here <https://docker-registry.dccn.nl>`_.
 
 .. Note::
     For the sake of simplicity, the internal private registry is using a self-signed X.509 certificate. In order to trust it, one needs to copy the certificate of the docker registry server to the docker host, under the directory, e.g. ``/etc/docker/certs.d/docker-registry.dccn.nl:5000/ca.crt``.
