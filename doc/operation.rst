@@ -322,7 +322,7 @@ Assuming the docker-compose file is called ``docker-compose.yml``, to launch the
 
 .. code-block:: bash
 
-    $ docker login docker-registry.dccn.nl
+    $ docker login docker-registry.dccn.nl:5000
     $ docker stack deploy -c docker-compose.yml --with-registry-auth <StackName>
 
 When there is an update in the stack description file (e.g. ``docker-compose.yml``), one can use the same command to apply changes on the running stack.
