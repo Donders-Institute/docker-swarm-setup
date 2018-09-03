@@ -44,3 +44,25 @@ After that you could check the cluster using
 
 Et voilà! You have just created a swarm cluster, as simple as one command... As you have noticed, it is a one-node cluster.  In addition, you see that the node is by default a manager. Since it is the only manager, it is also the leading manager (*Leader*).
 
+Join tokens
+===========
+
+Managers also hold tokens that can be used by other nodes to join the cluster. There are two joining tokens; one for joining the cluster as a mansger, the other for being a worker.  To retrieve the token for manager, use the following command on the first manager.
+
+.. code-block:: bash
+
+    $ docker swarm join-token manager
+    To add a manager to this swarm, run the following command:
+
+        docker swarm join --token SWMTKN-1-4tznpl3vlnpgyp4f8papm2e5my9o27p6v2ewk41m1xfk654fun-e5lv67kc05o3wcquywe0hujya 131.174.44.95:2377
+
+For worker, one does
+
+.. code-block:: bash
+
+    $ docker swarm join-token worker
+    To add a worker to this swarm, run the following command:
+
+        docker swarm join --token SWMTKN-1-4tznpl3vlnpgyp4f8papm2e5my9o27p6v2ewk41m1xfk654fun-2k9eap8y5vzgj7yzxminkxor7 131.174.44.95:2377
+
+The output of these two commands simply tells you what to run on the nodes that are about to join the cluster.
