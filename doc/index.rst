@@ -10,6 +10,7 @@ DCCN Docker Swarm Cluster
    :maxdepth: 2
 
    Introduction <intro.rst>
+   Terminology <terminology.rst>
    Design <design.rst>
    Operation <operation.rst>
    Monitoring <monitor.rst>

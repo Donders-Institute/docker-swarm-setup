@@ -1,5 +1,5 @@
 {
-    "restructuredtext.confPath": "${workspaceRoot}/doc",
+    "restructuredtext.confPath": "/home/honlee/Projects/docker-swarm-setup/doc",
     "restructuredtext.linter.extraArgs": [
         "--ignore D001"
     ],
