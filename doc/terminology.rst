@@ -9,6 +9,10 @@ Terminology
 
 **Worker** refers to the node sharing the container workload in a docker swarm cluster.
 
+**Docker image** is an executable package that includes everything needed to run an application--the code, a runtime, libraries, environment variables, and configuration files.
+
+**Docker container** is a runtime instance of an image. A container is launched by running an **Docker image**.
+
 **Docker service** is a logical representation of multiple replicas of the same container.  Replicas are used for service load-balancing and/or failover.
 
-**Docker stack** is a set of linked **services**.
+**Docker stack** is a set of linked **Docker services**.
