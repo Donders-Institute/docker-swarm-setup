@@ -28,7 +28,7 @@ By design, managers are no difference to the workers in sharing container load e
 Creating a cluster
 ==================
 
-Docker swarm is a **mode** supported natively by the Docker engine since version 1.12 in 2016. Given a group of independent Docker nodes, one can easily start create a cluster using the command:
+Docker swarm is a "mode" supported natively by the Docker engine since version 1.12 in 2016. Given a group of independent Docker nodes, one can easily start create a cluster using the command:
 
 .. code-block:: bash
 
@@ -42,5 +42,5 @@ After that you could check the cluster using
     ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
     pyiykevht7pc24s7wxvgkscrn *   pl-torque.dccn.nl   Ready               Active              Leader              18.03.1-ce
 
-Et voilà! You have just created a swarm cluster, as simple as one command... As you have noticed, it is a one-node cluster.  In addition, you see that the node is by default a manager. Since it is the only manager, it is also the leading manager (**Leader**).
+Et voilà! You have just created a swarm cluster, as simple as one command... As you have noticed, it is a one-node cluster.  In addition, you see that the node is by default a manager. Since it is the only manager, it is also the leading manager (*Leader*).
 
