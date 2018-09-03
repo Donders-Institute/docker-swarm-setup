@@ -10,9 +10,9 @@ DCCN Docker Swarm Cluster
    :maxdepth: 2
 
    Introduction <intro.rst>
-   System design <design.rst>
-   System operation <operation.rst>
-   System monitoring <monitor.rst>
+   Design <design.rst>
+   Operation <operation.rst>
+   Monitoring <monitor.rst>
    Tutorial: basic <tutorial/basic.rst>
    Tutorial: orchestration <tutorial/orchestration.rst>
 ..   Service development <devops.rst>
