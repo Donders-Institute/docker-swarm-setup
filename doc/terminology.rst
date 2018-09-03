@@ -7,7 +7,7 @@ Terminology
 
 **Docker swarm cluster** is a group of connected Docker nodes.  Each node has either a **manager** or **worker** role in the cluster. At least one master node is required for a docker swarm cluster to function.
 
-**Manager** refers to the node maintaining the state of a docker swarm cluster. There can be one or more managers in a cluster. The more managers in the cluster, the higher level of the cluster fault-tolerance.
+**Manager** refers to the node maintaining the state of a docker swarm cluster. There can be one or more managers in a cluster. The more managers in the cluster, the higher level of the cluster fault-tolerance. The level of fault-tolerance is explained in this `document <https://docs.docker.com/engine/swarm/raft/>`_.
 
 **Worker** refers to the node sharing the container workload in a docker swarm cluster.
 
