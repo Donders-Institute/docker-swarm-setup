@@ -378,7 +378,9 @@ Reboot from shutdown
 ^^^^^^^^^^^^^^^^^^^^
 
 .. note::
-    By the accidental network outage in August 2017 (Domain Controller upgrade), the cluster nodes were not reacheable and required hard (i.e. push the power button) to reboot. In this case, the emergancy shutdown procedure was not followed.  Interestingly, the cluster was recovered automatically after sufficient amount of master nodes became online.  All services were also re-deployed immediately without any human intervention. 
+    In several network outage in 2017 and 2018, the cluster nodes were not reacheable and required hard (i.e. push the power button) to reboot. In this case, the emergancy shutdown procedure was not followed.  Interestingly, the cluster was recovered automatically after sufficient amount of master nodes became online.  All services were also re-deployed immediately without any human intervention.
+    
+    One thing to notice is that if the network outage causes the NFS mount to ``/mnt/docker`` not accessible, one may need to reboot the machines once the network connectivity is recovered as they can be irresponsive due to the hanging NFS connections.
 
 #. boot on the manager node (the last one being shutted down)
 #. boot on other nodes
