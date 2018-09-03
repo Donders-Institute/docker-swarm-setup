@@ -5,7 +5,7 @@ Terminology
 
 **Docker node/host** is a physical or virtual computer on which the Docker engine is enabled.
 
-**Docker swarm cluster** is a group of Docker nodes.  Each node has either a **manager** or **worker** role in the cluster. At least one master node is required for a docker swarm cluster to function.
+**Docker swarm cluster** is a group of connected Docker nodes.  Each node has either a **manager** or **worker** role in the cluster. At least one master node is required for a docker swarm cluster to function.
 
 **Manager** refers to the node maintaining the state of a docker swarm cluster. There can be one or more managers in a cluster. The more managers in the cluster, the higher level of the cluster fault-tolerance.
 
