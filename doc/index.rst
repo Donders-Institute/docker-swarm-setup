@@ -16,4 +16,5 @@ DCCN Docker Swarm Cluster
    Monitoring <monitor.rst>
    Tutorial: basic <tutorial/basic.rst>
    Tutorial: orchestration <tutorial/orchestration.rst>
+   Tutorial: Docker swarm <tutorial/swarm.rst>
 ..   Service development <devops.rst>
