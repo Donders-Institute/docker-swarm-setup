@@ -34,7 +34,7 @@ Docker swarm is a **mode** supported natively by the Docker engine since version
 
     $ docker swarm init
 
-After that you could check the cluster nodes using
+After that you could check the cluster using
 
 .. code-block:: bash
 
