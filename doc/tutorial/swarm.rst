@@ -12,8 +12,8 @@ In this tutorial, we are going to eliminate this single-point of failure by orch
 .. tip::
     Docker swarm is not the only solution for orchestrating containers on multiple computers.  A platform called `Kubenetes <https://kubernetes.io/>`_ was originally developed by Google and used in the many container infrastructure.
 
-The architecture
-================
+Architecture
+============
 
 The architecture of the Docker swarm cluster is relatively simple comparing to other distributed container orchestration platforms. As illustrated in :numref:`swarmarchitecture`, there are two types of nodes: *manager* and *worker*.
 
