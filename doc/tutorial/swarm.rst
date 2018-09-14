@@ -128,3 +128,69 @@ Hereafter is the interactive exercise:
 - Reverse the sequence of the previous step to promote nodes back to managers.
 
 All student nodes should be in manager role in the cluster.
+
+The docker-compose file
+=======================
+
+.. code-block:: yaml
+    :linenos:
+
+    version: '3.1'
+
+    networks:
+        dbnet:
+
+    services:
+        db:
+            image: mysql:latest
+            hostname: db
+            command: --default-authentication-plugin=mysql_native_password
+            environment:
+                - MYSQL_ROOT_PASSWORD=admin123
+                - MYSQL_DATABASE=registry
+                - MYSQL_USER=demo
+                - MYSQL_PASSWORD=demo123
+            volumes:
+                - /home/tg/honlee/tmp/orchestration/initdb.d:/docker-entrypoint-initdb.d
+                - /home/tg/honlee/tmp/orchestration/data:/var/lib/mysql
+            networks:
+                - dbnet
+            deploy:
+                mode: replicated
+                replicas: 1
+                placement:
+                    constraints:
+                        - node.labels.os != windows
+        web:
+            image: docker-registry.dccn.nl:5000/php:centos
+            volumes:
+                - /home/tg/honlee/tmp/orchestration/app:/var/www/html
+                - /home/tg/honlee/tmp/orchestration/log:/var/log/httpd
+            networks:
+                - dbnet
+            ports:
+                - 8080:80
+            depends_on:
+                - db
+            deploy:
+                mode: replicated
+                replicas: 2
+                placement:
+                    constraints:
+                        - node.labels.os != windows
+
+Sharing volumn and image
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Overlay network
+^^^^^^^^^^^^^^^
+
+Container placement
+^^^^^^^^^^^^^^^^^^^
+
+Launching stack
+===============
+
+.. code-block:: bash
+
+    $ docker stack deploy -c docker-compose.yml myapp
