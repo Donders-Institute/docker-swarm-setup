@@ -30,11 +30,11 @@ By design, managers are no difference to the workers in sharing container load e
 Service and stack
 ^^^^^^^^^^^^^^^^^
 
-Two terminology used in Docker swarm should be pointed out here: *service* and *stack*.
+Two terms used frequently in Docker swarm should be pointed out here: *service* and *stack*.
 
-In the swarm cluster, a container can be started with multiple replicas. The term *service* is used to refer to the replicas of the same container.
+In the swarm cluster, a container can be started with multiple instances (i.e. replicas). The term *service* is used to refer to the replicas of the same container.
 
-A *stack* is referred to a group of connected *services*, and described by a more elaborated *docker-compose* file.
+A *stack* is referred to a group of connected *services*.  Similar to the single-node orchestration, a stack is also described by a *docker-compose* file with extra attributes specific to Docker swarm.
 
 Creating a cluster
 ==================
