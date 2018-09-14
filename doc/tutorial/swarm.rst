@@ -58,7 +58,7 @@ Et voilà! You have just created a swarm cluster, as simple as one command... As
 Join tokens
 ===========
 
-Managers also hold tokens that can be used by other nodes to join the cluster. There are two joining tokens; one for joining the cluster as a mansger, the other for being a worker.  To retrieve the token for manager, use the following command on the first manager.
+Managers also hold tokens (a.k.a. join token) for nodes to join the cluster. There are two join tokens; one for joining the cluster as a mansger, the other for being a worker.  To retrieve the token for manager, use the following command on the first manager.
 
 .. code-block:: bash
 
@@ -93,3 +93,38 @@ Adding nodes is done by executing the command provided by the ``docker swarm joi
 Labeling nodes
 ^^^^^^^^^^^^^^
 
+It is sometimes useful to lable the node so that they can be distinguished by, e.g. the operation system of the host, for deploying containers.  Assuming we just added a Windows node to the cluster, we could assigne a lable *os=windows* to the node so that we can use the label to deploy containers that require to run on Windows.  For that, we do:
+
+.. code-block:: bash
+
+    $ docker node update --label-add os=windows <hostname>
+
+.. tip::
+    There are more than node lables that can help us locating nodes for specific containers.
+
+Promoting and demoting nodes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Manager node can demote manager node to become a worker or promote worker to become a manager. This dynamics allows administrator to ensure sufficient managers in the cluster while some manager nodes need to go down for maintenance. For promoting or demoting a node, one does:
+
+.. code-block:: bash
+
+    $ docker promote <hostname>
+
+or
+
+.. code-block:: bash
+
+    $ docker demote <hostname>
+
+Exercise: join the cluster
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Hereafter is the interactive exercise:
+
+- The tutor prepared docker-engine nodes, and created a one-node cluster in advance.  The tutor distributes join token for manager node to student, and ask student to add node to the cluster.
+- The tutor asks students to label the node with label *os=linux* and *owner=student*.
+- The tutor asks students to demote node in a sequencial order.  For example, student 1 demotes the node prepared by the tutor followed by student 2 demotes the node student 1 has been working on followed by student 3 demote the node student 2 has been working on, etc.  At the end, the cluster should still have one manager node that is operated by the last student.
+- Reverse the sequence of the previous step to promote nodes back to managers.
+
+All student nodes should be in manager role in the cluster.
