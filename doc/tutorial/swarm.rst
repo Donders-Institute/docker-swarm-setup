@@ -3,7 +3,9 @@ Tutorial: Docker swarm
 
 In the previous tutorial, we have learnd about container orchestration for running a service stack with load-balancing feature.  However, the whole stack is running on a single Docker node, meaning that the service will be interrupted when the node is down, a single-point of failure.
 
-In this tutorial, we are going to eliminate this single-point of failure by orchestrating containers on a cluster of Docker nodes, a Docker swarm cluster.  Apart from that, you will learn:
+In this tutorial, we are going to eliminate this single-point of failure by orchestrating containers on a cluster of Docker nodes, a Docker swarm cluster.  We will revisit our web application developed in the :ref:`tutorial-orchestration` session, and make our web-tier redundent for eventual node failure.
+
+You will learn:
 
 - how to create a swarm cluster from scratch,
 - how to label nodes in a cluster,
@@ -24,6 +26,15 @@ By design, managers are no difference to the workers in sharing container load e
     :alt: the swarm architecture.
 
     the swarm architecture, an illustration from `the docker blog <https://blog.docker.com/2016/06/docker-1-12-built-in-orchestration/>`_.
+
+Service and stack
+^^^^^^^^^^^^^^^^^
+
+Two terminology used in Docker swarm should be pointed out here: *service* and *stack*.
+
+In the swarm cluster, a container can be started with multiple replicas. The term *service* is used to refer to the replicas of the same container.
+
+A *stack* is referred to a group of connected *services*, and described by a more elaborated *docker-compose* file.
 
 Creating a cluster
 ==================
@@ -66,3 +77,19 @@ For worker, one does
         docker swarm join --token SWMTKN-1-4tznpl3vlnpgyp4f8papm2e5my9o27p6v2ewk41m1xfk654fun-2k9eap8y5vzgj7yzxminkxor7 131.174.44.95:2377
 
 The output of these two commands simply tells you what to run on the nodes that are about to join the cluster.
+
+Adding nodes
+============
+
+Adding nodes is done by executing the command provided by the ``docker swarm join-token`` commands above.  After that, you can see the cluster has more nodes available.
+
+.. code-block:: bash
+
+    ID                            HOSTNAME              STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+    zqmkhtcq2bx6wvb1hg1h8psww     pl-cvmfs-s1.dccn.nl   Ready               Active              Reachable           18.03.1-ce
+    mmssbtdqb66rym7ac7yqwq2ib     pl-squid.dccn.nl      Ready               Active              Reachable           18.03.1-ce
+    pyiykevht7pc24s7wxvgkscrn *   pl-torque.dccn.nl     Ready               Active              Leader              18.03.1-ce
+
+Labeling nodes
+^^^^^^^^^^^^^^
+

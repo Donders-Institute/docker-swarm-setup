@@ -1,3 +1,5 @@
+.. _tutorial-orchestration:
+
 Tutorial: single-host orchestration
 ***********************************
 
