@@ -182,6 +182,9 @@ The docker-compose file
 Sharing volumn and image
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
+- bind-mount to shared storage
+- docker registry for image
+
 Overlay network
 ^^^^^^^^^^^^^^^
 
@@ -194,3 +197,8 @@ Launching stack
 .. code-block:: bash
 
     $ docker stack deploy -c docker-compose.yml myapp
+
+Network routing mesh
+^^^^^^^^^^^^^^^^^^^^
+
+- figure illustration the routing mesh, using the example of the same docker-compose file
