@@ -188,7 +188,7 @@ Sharing volumn and image
 Overlay network
 ^^^^^^^^^^^^^^^
 
-- "Deep dive in Docker Overlay Networks": https://www.youtube.com/watch?v=IgDLNcpmfqI
+- "Deep dive in Docker Overlay Networks": https://www.youtube.com/watch?v=b3XDl0YsVsg https://www.youtube.com/watch?v=IgDLNcpmfqI
 
 Container placement
 ^^^^^^^^^^^^^^^^^^^
