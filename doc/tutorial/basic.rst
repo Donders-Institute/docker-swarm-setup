@@ -203,7 +203,6 @@ Let's access to the bash shell of the running httpd container:
 .. code-block:: bash
 
     $ docker exec -it myhttpd bash
-    $ hostname
 
 In Apache HTTPd, the way to replace the default homepage is creating our own ``index.html`` file within the folder ``/var/www/html``.  For example, using the command below to create a HTML form in ``/var/www/html/index.html``:
 
@@ -257,7 +256,7 @@ When the volume is available, one could map the volume into the container's path
     :linenos:
 
     $ docker stop myhttpd
-    $ docker run -rm -d -p 8080:80 \
+    $ docker run --rm -d -p 8080:80 \
     -v htmldoc:/var/www/html \
     --name myhttpd httpd:centos
 
@@ -279,7 +278,7 @@ Now get into the shell of the container, and create our own ``index.html`` again
     </body>
     </html>
     EOF
-    $ exist
+    $ exit
 
 Check if the new ``index.html`` is in place by reloading the page `http://localhost:8080 <http://localhost:8080>`_.
 
@@ -321,7 +320,7 @@ By binding the directory ``~/basic/htmldoc`` into the container's ``/var/www/htm
     $ docker stop myhttpd
     $ docker run -rm -d -p 8080:80 \
     -v ~/tmp/basic/htmldoc:/var/www/html \
-    --name myhttpd httpd:centos
+    --name myphp php:centos
 
 .. hint::
     While doing the bind mounts in the container, the benefit is that one can change the files on the host and the changes will take effect right in the container.  In addition, if new files are created in the container, they will also appear on the host.
