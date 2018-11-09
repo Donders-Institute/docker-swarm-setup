@@ -318,7 +318,7 @@ By binding the directory ``~/basic/htmldoc`` into the container's ``/var/www/htm
     :linenos:
 
     $ docker stop myhttpd
-    $ docker run -rm -d -p 8080:80 \
+    $ docker run --rm -d -p 8080:80 \
     -v ~/tmp/basic/htmldoc:/var/www/html \
     --name myphp php:centos
 
