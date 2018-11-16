@@ -202,7 +202,7 @@ Let's access to the bash shell of the running httpd container:
 
 .. code-block:: bash
 
-    $ docker exec -it myhttpd bash
+    $ docker exec -it myphp bash
 
 In Apache HTTPd, the way to replace the default homepage is creating our own ``index.html`` file within the folder ``/var/www/html``.  For example, using the command below to create a HTML form in ``/var/www/html/index.html``:
 
@@ -222,16 +222,16 @@ In Apache HTTPd, the way to replace the default homepage is creating our own ``i
     </html>
     EOF
 
-If you revisit the page `http://localhost:8080 <http://localhost:8080>`_, you will see the new homepage we just created.
+If you revisit the page `http://localhost:8080/index.html <http://localhost:8080/index.html>`_, you will see the new homepage we just created.
 
 Now imaging that we have to restart the container for a reason.  For that, we do:
 
 .. code-block:: bash
 
-    $ docker stop myhttpd
-    $ docker run --rm -d -p 8080:80 --name myhttpd httpd:centos
+    $ docker stop myphp
+    $ docker run --rm -d -p 8080:80 --name myphp php:centos
 
-Try connect to the page `http://localhost:8080 <http://localhost:8080>`_ again with the browser. **Do you see the homepage we just added to the container?**
+Try connect to the page `http://localhost:8080/index.html <http://localhost:8080/index.html>`_ again with the browser. **Do you see the homepage we just added to the container?**
 
 .. hint::
     Changes made in the container are stored in the container layer which is only available during the container's lifetime.  When you stop the container, the container layer is removed from the host and thus the data in this layer is **NOT** persistent.
@@ -255,16 +255,16 @@ When the volume is available, one could map the volume into the container's path
 .. code-block:: bash
     :linenos:
 
-    $ docker stop myhttpd
+    $ docker stop myphp
     $ docker run --rm -d -p 8080:80 \
     -v htmldoc:/var/www/html \
-    --name myhttpd httpd:centos
+    --name myphp php:centos
 
 Now get into the shell of the container, and create our own ``index.html`` again:
 
 .. code-block:: bash
 
-    $ docker exec -it myhttpd bash
+    $ docker exec -it myphp bash
     $ cat > /var/www/html/index.html <<EOF
     <html>
     <head></head>
@@ -280,16 +280,16 @@ Now get into the shell of the container, and create our own ``index.html`` again
     EOF
     $ exit
 
-Check if the new ``index.html`` is in place by reloading the page `http://localhost:8080 <http://localhost:8080>`_.
+Check if the new ``index.html`` is in place by reloading the page `http://localhost:8080/index.html <http://localhost:8080/index.html>`_.
 
 Restart the container again:
 
 .. code-block:: bash
 
-    $ docker stop myhttpd
+    $ docker stop myphp
     $ docker run -rm -d -p 8080:80 \
     -v htmldoc:/var/www/html \
-    --name myhttpd httpd:centos
+    --name myphp php:centos
 
 You should see that our own ``index.html`` page is still available after restarting the container.
 
@@ -317,7 +317,7 @@ By binding the directory ``~/basic/htmldoc`` into the container's ``/var/www/htm
 .. code-block:: bash
     :linenos:
 
-    $ docker stop myhttpd
+    $ docker stop myphp
     $ docker run --rm -d -p 8080:80 \
     -v ~/tmp/basic/htmldoc:/var/www/html \
     --name myphp php:centos
