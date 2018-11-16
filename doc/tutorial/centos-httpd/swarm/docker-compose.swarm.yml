@@ -1,0 +1,47 @@
+version: '3.1'
+
+networks:
+    default:
+
+volumes:
+    dbdata:
+    weblog:
+
+services:
+    db:
+        image: mysql:latest
+        hostname: db
+        command: --default-authentication-plugin=mysql_native_password
+        environment:
+            - MYSQL_ROOT_PASSWORD=admin123
+            - MYSQL_DATABASE=registry
+            - MYSQL_USER=demo
+            - MYSQL_PASSWORD=demo123
+        volumes:
+            - ./initdb.d:/docker-entrypoint-initdb.d
+            - dbdata:/var/lib/mysql
+        networks:
+            - default
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == vm1
+    web:
+        image: docker-registry.dccn.nl:5000/php:centos
+        volumes:
+            - ./app:/var/www/html:ro
+            - weblog:/var/log/httpd
+        networks:
+            - default
+        ports:
+            - 8080:80
+        depends_on:
+            - db
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.labels.os == linux

@@ -1,0 +1,9 @@
+version: "3.1"
+
+services:
+  proxy:
+    image: nginx:latest
+    ports:
+      - "80:80/tcp"
+    volumes:
+      - ./proxy.conf.d:/etc/nginx/conf.d:ro
