@@ -84,10 +84,10 @@ Docker swarm is a "mode" supported natively by the Docker engine since version 1
     [vm1]$ docker swarm init --advertise-addr 192.168.99.100
 
 .. note::
-    The `advertise-addr` should be the IP address of the docker machine.  It may be different in different system.
+    The ``--advertise-addr`` should be the IP address of the docker machine.  It may be different in different system.
 
 .. note::
-    The notation `[vm1]` on the command-line prompt indicates that the command should be executed on the specified docker machine.  All the commands in this tutorial follow the same notation.  If there is no such notation on the prompt, the command is performed on the host of the docker machines.
+    The notation ``[vm1]`` on the command-line prompt indicates that the command should be executed on the specified docker machine.  All the commands in this tutorial follow the same notation.  If there is no such notation on the prompt, the command is performed on the host of the docker machines.
 
 After that you could check the cluster using
 
@@ -125,7 +125,7 @@ The output of these two commands simply tells you what to run on the nodes that 
 Adding nodes
 ============
 
-Adding nodes is done by executing the command provided by the ``docker swarm join-token`` commands above on the node that you are about to add.  For exampl, let's add our second docker machine (`vm2`) to the cluster as a manager:
+Adding nodes is done by executing the command provided by the ``docker swarm join-token`` commands above on the node that you are about to add.  For exampl, let's add our second docker machine (``vm2``) to the cluster as a manager:
 
 .. code-block:: bash
 
@@ -143,7 +143,7 @@ After that, you can see the cluster has more nodes available.
     m5r1j48nnl1u9n9mbr8ocwoa3 *   vm2                 Ready               Active              Reachable           18.06.1-ce
 
 .. note::
-    The `docker node` command is meant for managing nodes in the cluster, and therefore, it can only be executed on the manager nodes.  Since we just added `vm2` as a manager, we could do the `docker node ls` right away.
+    The ``docker node`` command is meant for managing nodes in the cluster, and therefore, it can only be executed on the manager nodes.  Since we just added ``vm2`` as a manager, we could do the ``docker node ls`` right away.
 
 Labeling nodes
 ^^^^^^^^^^^^^^
@@ -161,7 +161,7 @@ It is sometimes useful to lable the nodes.  Node lables are useful for container
 Promoting and demoting nodes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Manager node can demote manager node to become a worker or promote worker to become a manager. This dynamics allows administrator to ensure sufficient managers in the cluster while some manager nodes need to go down for maintenance.  Let's demote `vm2` from manager to worker:
+Manager node can demote manager node to become a worker or promote worker to become a manager. This dynamics allows administrator to ensure sufficient managers in the cluster while some manager nodes need to go down for maintenance.  Let's demote ``vm2`` from manager to worker:
 
 .. code-block:: bash
 
@@ -173,7 +173,7 @@ Manager node can demote manager node to become a worker or promote worker to bec
     svdjh0i3k9ty5lsf4lc9d94mw *   vm1                 Ready               Active              Leader              18.06.1-ce
     m5r1j48nnl1u9n9mbr8ocwoa3     vm2                 Ready               Active                                  18.06.1-ce
 
-Promote the `vm2` back to manager:
+Promote the ``vm2`` back to manager:
 
 .. code-block:: bash
 
@@ -186,7 +186,7 @@ The docker-compose file
 The following docker-compose file is modified from the one we used in the :ref:`tutorial-orchestration`.  Differences are highlighted.  Changes are:
 
 * we stripped down the network part,
-* we added container placement requirements via the `deploy`,
+* we added container placement requirements via the ``deploy`` section,
 * we stored persistent data in docker volumes,
 * we made use of a private docker image registry.
 
@@ -259,9 +259,15 @@ Container placement
 Launching stack
 ===============
 
+The docker-compose file above is already provided as part of the downloaded files in the preparation step.  The filename is ``docker-compose.swarm.yml``.  Simply use the following commands to launch the application stack in the cluster.
+
 .. code-block:: bash
 
-    $ docker stack deploy -c docker-compose.yml myapp
+    $ docker login docker-registry.dccn.nl:5000
+    $ docker stack deploy -c docker-compose.swarm.yml --with-registry-auth webapp
+
+.. note::
+    Note that we firstly log into the private registry.  This is necessary for the deployment command to propagate the authentication token so that the image can be pulled on a (remote) cluster node.  During the deployment, we should also use the option ``--with-registry-auth``.
 
 Network routing mesh
 ^^^^^^^^^^^^^^^^^^^^
