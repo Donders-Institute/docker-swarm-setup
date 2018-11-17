@@ -192,7 +192,7 @@ The following docker-compose file is modified from the one we used in the :ref:`
 
 .. code-block:: yaml
     :linenos:
-    :emphasize-lines: 2,3,4,5,6,7,20,23,24,25,26,27,28,30,33,40,41,42,43,44,45
+    :emphasize-lines: 3,4,6,7,8,22,25,26,27,28,29,30,32,35,42,43,44,45,46,47
 
     version: '3.1'
 
