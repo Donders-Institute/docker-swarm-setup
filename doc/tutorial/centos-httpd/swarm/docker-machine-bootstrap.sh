@@ -49,3 +49,5 @@ for vm in $@; do
     # step 2. update vm with registry certificate
     add_registry_crt /mnt/install/kickstart-7/docker/docker-registry.crt $vm
 done
+
+docker-machine ls
