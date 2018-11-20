@@ -8,11 +8,49 @@ In this tutorial, we are going to eliminate this single-point of failure by orch
 You will learn:
 
 - how to create a swarm cluster from scratch,
-- how to label nodes in a cluster,
-- how to deploy a stack in a swarm cluster.
+- how to deploy a stack in a swarm cluster,
+- how to manage the cluster.
 
 .. tip::
     Docker swarm is not the only solution for orchestrating containers on multiple computers.  A platform called `Kubenetes <https://kubernetes.io/>`_ was originally developed by Google and used in the many container infrastructure.
+
+Preparation
+===========
+
+In this tutorial, we are going to create a cluster using `docker machine <https://docs.docker.com/machine/>`_.  For that, we will need to install `VirtualBox <https://virtualbox.org>`_ on the computer.  Follow the commands below to install the VirtualBox RPM.
+
+.. code-block:: bash
+
+    $ wget https://download.virtualbox.org/virtualbox/5.2.22/VirtualBox-5.2-5.2.22_126460_el7-1.x86_64.rpm
+    $ sudo yum install VirtualBox-5.2-5.2.22_126460_el7-1.x86_64.rpm
+
+Next step is to download the files we are going to use in this exercise:
+
+.. code-block:: bash
+
+    $ mkdir -p ~/tmp
+    $ cd ~/tmp
+    $ https://github.com/Donders-Institute/docker-swarm-setup/raw/master/doc/tutorial/centos-httpd/swarm.tar.gz
+    $ tar xvzf swarm.tar.gz
+    $ cd swarm
+
+Bootstrap two docker machines with the prepared script:
+
+.. code-block:: bash
+
+    $ ./docker-machine-bootstrap.sh vm1 vm2
+
+Open two new terminals, each logs into one of the two virtual machines. For example, on terminal one, do
+
+.. code-block:: bash
+
+    $ docker-machine ssh vm1
+
+On the second terminal, do
+
+.. code-block:: bash
+
+    $ docker-machine ssh vm2
 
 Architecture
 ============
@@ -39,19 +77,25 @@ A *stack* is referred to a group of connected *services*.  Similar to the single
 Creating a cluster
 ==================
 
-Docker swarm is a "mode" supported natively by the Docker engine since version 1.12 in 2016. Given a group of independent Docker nodes, one can easily start create a cluster using the command:
+Docker swarm is a "mode" supported natively by the Docker engine since version 1.12 in 2016.  On the first docker machine, `vm1` in this case, we can simply initiate the cluster by:
 
 .. code-block:: bash
 
-    $ docker swarm init
+    [vm1]$ docker swarm init --advertise-addr 192.168.99.100
+
+.. note::
+    The ``--advertise-addr`` should be the IP address of the docker machine.  It may be different in different system.
+
+.. note::
+    The notation ``[vm1]`` on the command-line prompt indicates that the command should be executed on the specified docker machine.  All the commands in this tutorial follow the same notation.  If there is no such notation on the prompt, the command is performed on the host of the docker machines.
 
 After that you could check the cluster using
 
 .. code-block:: bash
 
-    $ docker node ls
+    [vm1]$ docker node ls
     ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
-    pyiykevht7pc24s7wxvgkscrn *   pl-torque.dccn.nl   Ready               Active              Leader              18.03.1-ce
+    svdjh0i3k9ty5lsf4lc9d94mw *   vm1                 Ready               Active              Leader              18.06.1-ce
 
 Et voilà! You have just created a swarm cluster, as simple as one command... As you have noticed, it is a one-node cluster.  In addition, you see that the node is by default a manager. Since it is the only manager, it is also the leading manager (*Leader*).
 
@@ -62,42 +106,54 @@ Managers also hold tokens (a.k.a. join token) for nodes to join the cluster. The
 
 .. code-block:: bash
 
-    $ docker swarm join-token manager
+    [vm1]$ docker swarm join-token manager
     To add a manager to this swarm, run the following command:
 
-        docker swarm join --token SWMTKN-1-4tznpl3vlnpgyp4f8papm2e5my9o27p6v2ewk41m1xfk654fun-e5lv67kc05o3wcquywe0hujya 131.174.44.95:2377
+        docker swarm join --token SWMTKN-1-2i60ycz95dbpblm0bewz0fyypwkk5jminbzpyheh7yzf5mvrla-1q74k0ngm0br70ur93h7pzdg4 192.168.99.100:2377
 
 For worker, one does
 
 .. code-block:: bash
 
-    $ docker swarm join-token worker
+    [vm1]$ docker swarm join-token worker
     To add a worker to this swarm, run the following command:
 
-        docker swarm join --token SWMTKN-1-4tznpl3vlnpgyp4f8papm2e5my9o27p6v2ewk41m1xfk654fun-2k9eap8y5vzgj7yzxminkxor7 131.174.44.95:2377
+        docker swarm join --token SWMTKN-1-2i60ycz95dbpblm0bewz0fyypwkk5jminbzpyheh7yzf5mvrla-9br20buxcon364sgmdbcfobco 192.168.99.100:2377
 
 The output of these two commands simply tells you what to run on the nodes that are about to join the cluster.
 
 Adding nodes
 ============
 
-Adding nodes is done by executing the command provided by the ``docker swarm join-token`` commands above.  After that, you can see the cluster has more nodes available.
+Adding nodes is done by executing the command provided by the ``docker swarm join-token`` commands above on the node that you are about to add.  For exampl, let's add our second docker machine (``vm2``) to the cluster as a manager:
 
 .. code-block:: bash
 
-    ID                            HOSTNAME              STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
-    zqmkhtcq2bx6wvb1hg1h8psww     pl-cvmfs-s1.dccn.nl   Ready               Active              Reachable           18.03.1-ce
-    mmssbtdqb66rym7ac7yqwq2ib     pl-squid.dccn.nl      Ready               Active              Reachable           18.03.1-ce
-    pyiykevht7pc24s7wxvgkscrn *   pl-torque.dccn.nl     Ready               Active              Leader              18.03.1-ce
+    [vm2]$ docker swarm join --token \
+    SWMTKN-1-2i60ycz95dbpblm0bewz0fyypwkk5jminbzpyheh7yzf5mvrla-1q74k0ngm0br70ur93h7pzdg4 \
+    192.168.99.100:2377
+
+After that, you can see the cluster has more nodes available.
+
+.. code-block:: bash
+
+    [vm2]$ docker node ls
+    ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+    svdjh0i3k9ty5lsf4lc9d94mw     vm1                 Ready               Active              Leader              18.06.1-ce
+    m5r1j48nnl1u9n9mbr8ocwoa3 *   vm2                 Ready               Active              Reachable           18.06.1-ce
+
+.. note::
+    The ``docker node`` command is meant for managing nodes in the cluster, and therefore, it can only be executed on the manager nodes.  Since we just added ``vm2`` as a manager, we could do the ``docker node ls`` right away.
 
 Labeling nodes
 ^^^^^^^^^^^^^^
 
-It is sometimes useful to lable the node so that they can be distinguished by, e.g. the operation system of the host, for deploying containers.  Assuming we just added a Windows node to the cluster, we could assigne a lable *os=windows* to the node so that we can use the label to deploy containers that require to run on Windows.  For that, we do:
+It is sometimes useful to lable the nodes.  Node lables are useful for container placement on nodes.  Let's now lable the two nodes with *os=linux*.
 
 .. code-block:: bash
 
-    $ docker node update --label-add os=windows <hostname>
+    [vm1]$ docker node update --label-add os=linux vm1
+    [vm1]$ docker node update --label-add os=linux vm2
 
 .. tip::
     There are more than node lables that can help us locating nodes for specific containers.
@@ -105,40 +161,47 @@ It is sometimes useful to lable the node so that they can be distinguished by, e
 Promoting and demoting nodes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Manager node can demote manager node to become a worker or promote worker to become a manager. This dynamics allows administrator to ensure sufficient managers in the cluster while some manager nodes need to go down for maintenance. For promoting or demoting a node, one does:
+Manager node can demote manager node to become a worker or promote worker to become a manager. This dynamics allows administrator to ensure sufficient managers in the cluster while some manager nodes need to go down for maintenance.  Let's demote ``vm2`` from manager to worker:
 
 .. code-block:: bash
 
-    $ docker promote <hostname>
+    [vm1]$ docker node demote vm2
+    Manager vm2 demoted in the swarm.
 
-or
+    [vm1]$ docker node ls
+    ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+    svdjh0i3k9ty5lsf4lc9d94mw *   vm1                 Ready               Active              Leader              18.06.1-ce
+    m5r1j48nnl1u9n9mbr8ocwoa3     vm2                 Ready               Active                                  18.06.1-ce
+
+Promote the ``vm2`` back to manager:
 
 .. code-block:: bash
 
-    $ docker demote <hostname>
-
-Exercise: join the cluster
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Hereafter is the interactive exercise:
-
-- The tutor prepared docker-engine nodes, and created a one-node cluster in advance.  The tutor distributes join token for manager node to student, and ask student to add node to the cluster.
-- The tutor asks students to label the node with label *os=linux* and *owner=student*.
-- The tutor asks students to demote node in a sequencial order.  For example, student 1 demotes the node prepared by the tutor followed by student 2 demotes the node student 1 has been working on followed by student 3 demote the node student 2 has been working on, etc.  At the end, the cluster should still have one manager node that is operated by the last student.
-- Reverse the sequence of the previous step to promote nodes back to managers.
-
-All student nodes should be in manager role in the cluster.
+    [vm1]$ docker node promote vm2
+    Node vm2 promoted to a manager in the swarm.
 
 The docker-compose file
 =======================
 
+The following docker-compose file is modified from the one we used in the :ref:`tutorial-orchestration`.  Differences are highlighted.  Changes are:
+
+* we stripped down the network part,
+* we added container placement requirements via the ``deploy`` section,
+* we stored persistent data in docker volumes,
+* we made use of a private docker image registry.
+
 .. code-block:: yaml
     :linenos:
+    :emphasize-lines: 3,4,6,7,8,22,25,26,27,28,29,30,32,35,42,43,44,45,46,47
 
     version: '3.1'
 
     networks:
-        dbnet:
+        default:
+
+    volumes:
+        dbdata:
+        weblog:
 
     services:
         db:
@@ -151,33 +214,33 @@ The docker-compose file
                 - MYSQL_USER=demo
                 - MYSQL_PASSWORD=demo123
             volumes:
-                - /home/tg/honlee/tmp/orchestration/initdb.d:/docker-entrypoint-initdb.d
-                - /home/tg/honlee/tmp/orchestration/data:/var/lib/mysql
+                - ./initdb.d:/docker-entrypoint-initdb.d
+                - dbdata:/var/lib/mysql
             networks:
-                - dbnet
+                - default
             deploy:
                 mode: replicated
                 replicas: 1
                 placement:
                     constraints:
-                        - node.labels.os != windows
+                        - node.hostname == vm1
         web:
             image: docker-registry.dccn.nl:5000/php:centos
             volumes:
-                - /home/tg/honlee/tmp/orchestration/app:/var/www/html
-                - /home/tg/honlee/tmp/orchestration/log:/var/log/httpd
+                - ./app:/var/www/html:ro
+                - weblog:/var/log/httpd
             networks:
-                - dbnet
+                - default
             ports:
                 - 8080:80
             depends_on:
                 - db
             deploy:
                 mode: replicated
-                replicas: 2
+                replicas: 1
                 placement:
                     constraints:
-                        - node.labels.os != windows
+                        - node.labels.os == linux
 
 Sharing volumn and image
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -196,9 +259,15 @@ Container placement
 Launching stack
 ===============
 
+The docker-compose file above is already provided as part of the downloaded files in the preparation step.  The filename is ``docker-compose.swarm.yml``.  Simply use the following commands to launch the application stack in the cluster.
+
 .. code-block:: bash
 
-    $ docker stack deploy -c docker-compose.yml myapp
+    $ docker login docker-registry.dccn.nl:5000
+    $ docker stack deploy -c docker-compose.swarm.yml --with-registry-auth webapp
+
+.. note::
+    Note that we firstly log into the private registry.  This is necessary for the deployment command to propagate the authentication token so that the image can be pulled on a (remote) cluster node.  During the deployment, we should also use the option ``--with-registry-auth``.
 
 Network routing mesh
 ^^^^^^^^^^^^^^^^^^^^
