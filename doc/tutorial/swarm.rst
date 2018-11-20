@@ -255,7 +255,7 @@ Follow the steps below to start the application stack, and make it accessible th
 
         [vm1]$ cd /hosthome/tg/honlee/tmp/swarm
 
-#. Login to the private registry:
+#. Login to the private registry with user *demo*:
 
     .. code-block:: bash
 
