@@ -23,6 +23,8 @@ services:
         networks:
             - default
         deploy:
+            restart_policy:
+                condition: none
             mode: replicated
             replicas: 1
             placement:
@@ -31,7 +33,7 @@ services:
     web:
         image: docker-registry.dccn.nl:5000/php:centos
         volumes:
-            - ./app:/var/www/html:ro
+            - ./app:/tmp/htmldoc:ro
             - weblog:/var/log/httpd
         networks:
             - default
