@@ -187,7 +187,7 @@ The following docker-compose file is modified from the one we used in the :ref:`
 
 * we stripped down the network part,
 * we added container placement requirements via the ``deploy`` section,
-* we stored persistent data in docker volumes,
+* we persistented MySQL data in a docker volume (*due to the fact that I don't know how to make bind-mount working with MySQL container in a swarm of docker machines*),
 * we made use of a private docker image registry.
 
 .. code-block:: yaml
@@ -227,7 +227,7 @@ The following docker-compose file is modified from the one we used in the :ref:`
         web:
             image: docker-registry.dccn.nl:5000/php:centos
             volumes:
-                - ./app:/var/www/html:ro
+                - ./app:/tmp/htmldoc:ro
                 - weblog:/var/log/httpd
             networks:
                 - default
@@ -242,11 +242,89 @@ The following docker-compose file is modified from the one we used in the :ref:`
                     constraints:
                         - node.labels.os == linux
 
-Sharing volumn and image
-^^^^^^^^^^^^^^^^^^^^^^^^
+Launching stack
+===============
 
-- bind-mount to shared storage
-- docker registry for image
+The docker-compose file above is already provided as part of the downloaded files in the preparation step.  The filename is ``docker-compose.swarm.yml``.
+
+Follow the steps below to start the application stack, and make it accessible through the host on which the two docker-machine VMs are running:
+
+#. Get into ``vm1`` and go to the directory in which you have downloaded the files for this tutorial.  It is a directory mounted under the ``/hosthome`` directory in the VM, e.g.
+
+    .. code-block:: bash
+
+        [vm1]$ cd /hosthome/tg/honlee/tmp/swarm
+
+#. Login to the private registry:
+
+    .. code-block:: bash
+
+        [vm1]$ docker login docker-registry.dccn.nl:5000
+
+#. Start the application stack:
+
+    .. code-block:: bash
+
+        [vm1]$ docker stack deploy -c docker-compose.swarm.yml --with-registry-auth webapp
+        Creating network webapp_default
+        Creating service webapp_db
+        Creating service webapp_web
+
+    .. note::
+        The ``--with-registry-auth`` is very important for pulling the ``php:centos`` image from the private repository.
+
+#. Check if the stack is started properly:
+
+    .. code-block:: bash
+
+        [vm1]$ docker stack ps webapp
+        ID                  NAME                IMAGE                                     NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+        7zez13p778rt        webapp_web.1        docker-registry.dccn.nl:5000/php:centos   vm2                 Running             Running 27 seconds ago                       
+        dmdipd7vl7si        webapp_db.1         mysql:latest                              vm1                 Running             Running 28 seconds ago
+
+#. Note that our web service (``webapp_web``) is running on ``vm2``.  So it is obvous that if we try to get the index page from ``vm2``, it should work.
+
+    .. code-block:: bash
+
+        [vm1]$ exit
+        $ docker-machine ls
+        NAME   ACTIVE   DRIVER       STATE     URL                         SWARM   DOCKER        ERRORS
+        vm1    -        virtualbox   Running   tcp://192.168.99.100:2376           v18.06.1-ce   
+        vm2    -        virtualbox   Running   tcp://192.168.99.101:2376           v18.06.1-ce   
+
+        $ curl http://192.168.99.101:8080
+
+    But you should note that getting the page from another VM ``vm1`` works as well:
+
+    .. code-block:: bash
+
+        $ curl http://192.168.99.100:8080
+
+    This is the magic of Docker Swarm's `routing mesh <https://docs.docker.com/engine/swarm/ingress/>`_ mechanism, which provides intrinsic feature of load balance and failover.
+
+#. Since we are running this cluster on virtual machines, the web service is not accessible via the host's IP address.  The workaround we are doing below is to start a NGINX container on the host, and proxy the HTTP request to the web service running on the VMs.
+
+    .. code-block:: bash
+
+        [vm1]$ exit
+        $ cd /home/tg/honlee/tmp/swarm
+        $ docker-compose -f docker-compose.proxy.yml up -d
+        $ docker-compose -f docker-compose.proxy.yml ps
+        Name              Command          State         Ports       
+        -----------------------------------------------------------------
+        swarm_proxy_1   nginx -g daemon off;   Up      0.0.0.0:80->80/tcp
+
+    .. note::
+        This workaround is very practicle for production.  Imaging you have a Swarm cluster running in a private network, and you want to expose the services to the Internet.  What you need is an gateway machine proxying requests from Internet to internal Swarm cluster. `NGINX <https://www.nginx.com/>`_ is a very powerful engine for proxying HTTP traffics, providing capability of load balancing and failover.
+
+        You may want to have a look of the NGINX configuration in the ``proxy.conf.d`` directory (part of the downloaded files) to see how to ride on the Docker Swarm's routing mesh feature for load balance and failover.
+
+Sharing Docker images
+^^^^^^^^^^^^^^^^^^^^^
+
+One benefit of using Docker swarm is that one can bring down a Docker node and the whole system will migrate all containers on it to other nodes.  This feature assumes that there is a central place where the Docker images can be pulled from.
+
+In the example docker-compose file above, we make use of the official MySQL image from the DockerHub and the ``php:centos`` image from a private registry, ``docker-registry.dccn.nl``.  This private registry requires user authentication.  This is why we need to login to this registry before starting the application stack.
 
 Overlay network
 ^^^^^^^^^^^^^^^
@@ -256,20 +334,84 @@ Overlay network
 Container placement
 ^^^^^^^^^^^^^^^^^^^
 
-Launching stack
-===============
-
-The docker-compose file above is already provided as part of the downloaded files in the preparation step.  The filename is ``docker-compose.swarm.yml``.  Simply use the following commands to launch the application stack in the cluster.
-
-.. code-block:: bash
-
-    $ docker login docker-registry.dccn.nl:5000
-    $ docker stack deploy -c docker-compose.swarm.yml --with-registry-auth webapp
-
-.. note::
-    Note that we firstly log into the private registry.  This is necessary for the deployment command to propagate the authentication token so that the image can be pulled on a (remote) cluster node.  During the deployment, we should also use the option ``--with-registry-auth``.
-
 Network routing mesh
 ^^^^^^^^^^^^^^^^^^^^
 
 - figure illustration the routing mesh, using the example of the same docker-compose file
+
+Service management
+==================
+
+Scaling
+^^^^^^^
+
+Once can also scale the service by updating the number of *replicas* of a service.  Let's scale the ``webapp_web`` service to 2 replicas.
+
+.. code-block:: bash
+
+    $ docker-machine ssh vm1
+
+    [vm1]$ docker service ls
+    ID                  NAME                MODE                REPLICAS            IMAGE                                     PORTS
+    vod0xeqlrhn4        webapp_db           replicated          1/1                 mysql:latest                              
+    lnpmd1ulg2tq        webapp_web          replicated          1/1                 docker-registry.dccn.nl:5000/php:centos   *:8080->80/tcp
+
+    [vm1]$ docker service update --replicas 2 webapp_web
+    [vm1]$ docker service ls
+    ID                  NAME                MODE                REPLICAS            IMAGE                                     PORTS
+    vod0xeqlrhn4        webapp_db           replicated          1/1                 mysql:latest                              
+    lnpmd1ulg2tq        webapp_web          replicated          2/2                 docker-registry.dccn.nl:5000/php:centos   *:8080->80/tcp
+
+Rotating update
+^^^^^^^^^^^^^^^
+
+Since we have two ``webapp_web`` replicas running in the cluster, we could now perform a rotating update without downtime.
+
+Let's make some changes in our web interface codes, e.g.
+
+.. code-block:: bash
+
+    [vm1]$ cp app_new/search*.php app
+    [vm1]$ cp app_new/navbar.php app/include/navbar.php
+
+The new codes add search functionality to the web application.  Following to that, we will have to restart the service, using the ``docker service update`` command:
+
+.. code-block:: bash
+
+    [vm1]$ docker service update --force webapp_web
+
+From the output of the command above, you may notice that the update on the two replicas is already a rotating update.  For instance, Docker only updates one replica at a time.  During the update, other replicas are still available for serving requests.
+
+Node management
+===============
+
+Sometimes we need to perform maintenance on a Docker node.  In the Docker swarm cluster, one first drains the containers on the node to be maintained.  This is done by setting the node's availability to ``drain``.  For example, if we want to perform maintenance on ``vm2``:
+
+    .. code-block:: bash
+
+        [vm1]$ docker node update --availability drain vm2
+        [vm1]$ docker node ls
+        ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+        svdjh0i3k9ty5lsf4lc9d94mw *   vm1                 Ready               Active              Leader              18.06.1-ce
+        m5r1j48nnl1u9n9mbr8ocwoa3     vm2                 Ready               Drain               Reachable           18.06.1-ce
+
+Once you have done that, you will notice all containers running on ``vm2`` are automatically moved to ``vm1``.
+
+    .. code-block:: bash
+        :emphasize-lines: 3,4
+
+        [vm1]$ docker stack ps webapp
+        ID                  NAME                IMAGE                                     NODE                DESIRED STATE       CURRENT STATE             ERROR               PORTS
+        9lmdd6cg2y74        webapp_web.1        docker-registry.dccn.nl:5000/php:centos   vm1                 Ready               Ready 3 seconds ago                           
+        ptq7l3kw6suk         \_ webapp_web.1    docker-registry.dccn.nl:5000/php:centos   vm2                 Shutdown            Running 3 seconds ago                         
+        zk9vcd5svqr2         \_ webapp_web.1    docker-registry.dccn.nl:5000/php:centos   vm2                 Shutdown            Shutdown 11 minutes ago                       
+        qa7ixd3f0c2j        webapp_db.1         mysql:latest                              vm1                 Running             Running 16 minutes ago                        
+        845mdx95dxho        webapp_web.2        docker-registry.dccn.nl:5000/php:centos   vm1                 Running             Running 11 minutes ago                        
+        akjedulcbtt5         \_ webapp_web.2    docker-registry.dccn.nl:5000/php:centos   vm1                 Shutdown            Shutdown 11 minutes ago
+
+After the maintenance work, just set the node's availability to ``active`` again:
+
+    .. code-block:: bash
+
+        [vm1]$ docker node update --availability activate vm2
+
