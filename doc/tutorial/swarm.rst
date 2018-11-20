@@ -180,8 +180,8 @@ Promote the ``vm2`` back to manager:
     [vm1]$ docker node promote vm2
     Node vm2 promoted to a manager in the swarm.
 
-The docker-compose file
-=======================
+docker-compose file for stack
+=============================
 
 The following docker-compose file is modified from the one we used in the :ref:`tutorial-orchestration`.  Differences are highlighted.  Changes are:
 
