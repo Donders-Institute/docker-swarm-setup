@@ -282,11 +282,10 @@ Follow the steps below to start the application stack, and make it accessible th
         7zez13p778rt        webapp_web.1        docker-registry.dccn.nl:5000/php:centos   vm2                 Running             Running 27 seconds ago                       
         dmdipd7vl7si        webapp_db.1         mysql:latest                              vm1                 Running             Running 28 seconds ago
 
-#. Note that our web service (``webapp_web``) is running on ``vm2``.  So it is obvous that if we try to get the index page from ``vm2``, it should work.
+#. Note that our web service (``webapp_web``) is running on ``vm2``.  So it is obvous that if we try to get the index page from ``vm2``, it should work.  Try the following commands on the host of the two VMs.
 
     .. code-block:: bash
 
-        [vm1]$ exit
         $ docker-machine ls
         NAME   ACTIVE   DRIVER       STATE     URL                         SWARM   DOCKER        ERRORS
         vm1    -        virtualbox   Running   tcp://192.168.99.100:2376           v18.06.1-ce   
@@ -294,7 +293,7 @@ Follow the steps below to start the application stack, and make it accessible th
 
         $ curl http://192.168.99.101:8080
 
-    But you should note that getting the page from another VM ``vm1`` works as well:
+    But you should note that getting the page from another VM ``vm1`` works as well even though the container is not running on it:
 
     .. code-block:: bash
 
@@ -306,7 +305,6 @@ Follow the steps below to start the application stack, and make it accessible th
 
     .. code-block:: bash
 
-        [vm1]$ exit
         $ cd /home/tg/honlee/tmp/swarm
         $ docker-compose -f docker-compose.proxy.yml up -d
         $ docker-compose -f docker-compose.proxy.yml ps
