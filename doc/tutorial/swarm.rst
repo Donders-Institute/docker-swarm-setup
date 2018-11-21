@@ -329,6 +329,7 @@ The following picuture illustats the network setup we have created by starting u
 Technical details on how Docker sets up the overlay network is described in `this blog by Nigel Poulton <http://blog.nigelpoulton.com/demystifying-docker-overlay-networking/>`_. In short, the overlay network makes use of the `virtual extensible LAN (VXLAN) tunnel <https://en.wikipedia.org/wiki/Virtual_Extensible_LAN>`_ to route layer 2 traffic accross IP networks.
 
 .. figure:: figures/webapp_overlay_illustrate.png
+    :scale: 80%
 
     An illustration of the Docker overlay network.
 
@@ -344,6 +345,7 @@ Network routing mesh
 In the Docker swarm cluster, routing mesh is the mechanism making services published to the host's network so that they can be accessed externally. It also enables each node in the cluster to accept connections on published ports of any published service, even if the service is not running on the node. Routing mesh is based on a overlay network (``ingress``) and a `IP Virtual Servers (IPVS) <http://www.linuxvirtualserver.org/software/ipvs.html>`_ load balancer (via a hindden ``ingress-sbox`` container) running on each of the Docker hosts.
 
 .. figure:: figures/webapp_routing_mesh_illustrate.png
+    :scale: 80%
 
     An illustration of the Docker ingress network and routing mesh.
 
