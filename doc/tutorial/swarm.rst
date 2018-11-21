@@ -342,7 +342,9 @@ Container placement
 Network routing mesh
 ^^^^^^^^^^^^^^^^^^^^
 
-- figure illustration the routing mesh, using the example of the same docker-compose file
+In the Docker swarm cluster, routing mesh is the mechanism making services published to the host's network so that they can be accessed externally. It also enables each node in the cluster to accept connections on published ports of any published service, even if the service is not running on the node.
+
+Routing mesh is based on a overlay network (``ingress``) and a swarm load balancer (``ingress-sbox``) running on each of the Docker hosts. When a new service needs to be published, the service is added to the ``ingress`` network with corresponding routing settings in the load balancer.
 
 Service management
 ==================
