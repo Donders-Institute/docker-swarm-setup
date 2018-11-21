@@ -327,7 +327,14 @@ In the example docker-compose file above, we make use of the official MySQL imag
 Overlay network
 ^^^^^^^^^^^^^^^
 
-- "Deep dive in Docker Overlay Networks": https://www.youtube.com/watch?v=b3XDl0YsVsg https://www.youtube.com/watch?v=IgDLNcpmfqI
+The following picuture illustats the network setup we have created by starting up the ``webapp`` stack.  The way Docker swarm interconnects containers on different docker hosts is using the so-called *overlay network*.
+
+Technical details on how Docker sets up the overlay network is described in `this blog by Nigel Poulton <http://blog.nigelpoulton.com/demystifying-docker-overlay-networking/>`_. In short, the overlay network makes use of the `virtual extensible LAN (VXLAN) tunnel <https://en.wikipedia.org/wiki/Virtual_Extensible_LAN>`_ to route layer 2 traffic accross IP networks.
+
+.. figure:: figures/webapp_overlay_illustrate.png
+
+.. hint::
+    There are also YouTube videos explaining the Docker overlay network.  For example, the `Deep dive in Docker Overlay Networks by Laurent Bernaille <https://www.youtube.com/watch?v=b3XDl0YsVsg>`_ is a good worth for watching.
 
 Container placement
 ^^^^^^^^^^^^^^^^^^^
