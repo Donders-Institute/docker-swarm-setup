@@ -31,9 +31,10 @@ services:
                 constraints:
                     - node.hostname == vm1
     web:
-        image: docker-registry.dccn.nl:5000/php:centos
+        build:
+            context: ./app
+        image: docker-registry.dccn.nl:5000/demo_user_register:1.0
         volumes:
-            - ./app:/tmp/htmldoc:ro
             - weblog:/var/log/httpd
         networks:
             - default
