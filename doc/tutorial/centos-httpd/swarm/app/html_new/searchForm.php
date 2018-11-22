@@ -6,7 +6,7 @@
 	<?php include('include/navbar.php'); ?>
 	<main class="container">
 		<h1 class="mt-5">Search</h1>
-                <form action="search.php">
+                <form action="search.php" method="post">
 		<div class="input-group">
 			<input type="text" class="form-control input-lg" id="name" name="name" placeholder="Search for name"></input>
 			<div class="input-group-btn">

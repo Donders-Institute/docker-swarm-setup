@@ -19,11 +19,11 @@
              "<strong>Connection failed:</strong> " . $conn->connect_error.
 			 "</div>";
 	} else {
-		$sql = "SELECT id, name, email FROM users WHERE name LIKE '%" . $_POST["name"] . "%'";
+		$sql = "SELECT id, name, email FROM users";
 		$result = $conn->query($sql);
         
 		if ($result->num_rows > 0) {
-		    echo "<h1 class='mt-5'>Found users:</h1>";
+		    echo "<h1 class='mt-5'>List of registered users:</h1>";
 		    echo "<table class='table'><thead><tr>";
 		    echo "<th>ID</th>";
 		    echo "<th>Name</th>";
@@ -42,9 +42,9 @@
 		    echo "</tbody>";
 		    echo "</table>";
 		} else {
-		    echo "<div class='alert alert-danger mt-5'><strong>".
-                         "User not found: " . $_POST["name"] .
-		         "</strong></div>";
+		    echo "<div class='alert alert-danger mt-5'>".
+                 "<strong>SQL error:</strong> " . $sql . "<br>". $conn->connect_error.
+		         "</div>";
 		}
 	}
 ?>

@@ -180,7 +180,7 @@ Promote the ``vm2`` back to manager:
 docker-compose file for stack
 =============================
 
-The following docker-compose file is modified from the one we used in the :ref:`tutorial-orchestration`.  Differences are highlighted.  Changes are:
+The following docker-compose file is modified from the one we used in the :ref:`tutorial-orchestration`.  Changes are:
 
 * we stripped down the network part,
 * we added container placement requirements via the ``deploy`` section,
@@ -189,7 +189,6 @@ The following docker-compose file is modified from the one we used in the :ref:`
 
 .. code-block:: yaml
     :linenos:
-    :emphasize-lines: 3,4,6,7,8,22,25,26,27,28,29,30,32,35,42,43,44,45,46,47
 
     version: '3.1'
 
@@ -216,15 +215,18 @@ The following docker-compose file is modified from the one we used in the :ref:`
             networks:
                 - default
             deploy:
+                restart_policy:
+                    condition: none
                 mode: replicated
                 replicas: 1
                 placement:
                     constraints:
                         - node.hostname == vm1
         web:
-            image: docker-registry.dccn.nl:5000/php:centos
+            build:
+                context: ./app
+            image: docker-registry.dccn.nl:5000/demo_user_register:1.0
             volumes:
-                - ./app:/tmp/htmldoc:ro
                 - weblog:/var/log/httpd
             networks:
                 - default
@@ -237,7 +239,9 @@ The following docker-compose file is modified from the one we used in the :ref:`
                 replicas: 1
                 placement:
                     constraints:
+                        - node.hostname == vm2
                         - node.labels.os == linux
+
 
 Launching stack
 ===============
@@ -275,9 +279,9 @@ Follow the steps below to start the application stack, and make it accessible th
     .. code-block:: bash
 
         [vm1]$ docker stack ps webapp
-        ID                  NAME                IMAGE                                     NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
-        7zez13p778rt        webapp_web.1        docker-registry.dccn.nl:5000/php:centos   vm2                 Running             Running 27 seconds ago                       
-        dmdipd7vl7si        webapp_db.1         mysql:latest                              vm1                 Running             Running 28 seconds ago
+        ID                  NAME                IMAGE                                                 NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+        j2dqr6xs9838        webapp_db.1         mysql:latest                                          vm1                 Running             Running 2 seconds ago                      
+        drm7fexzlb9t        webapp_web.1        docker-registry.dccn.nl:5000/demo_user_register:1.0   vm2                 Running             Running 4 seconds ago
 
 #. Note that our web service (``webapp_web``) is running on ``vm2``.  So it is obvous that if we try to get the index page from ``vm2``, it should work.  Try the following commands on the host of the two VMs.
 
@@ -296,7 +300,7 @@ Follow the steps below to start the application stack, and make it accessible th
 
         $ curl http://192.168.99.100:8080
 
-    This is the magic of Docker Swarm's `routing mesh <https://docs.docker.com/engine/swarm/ingress/>`_ mechanism, which provides intrinsic feature of load balance and failover.
+    This is the magic of Docker swarm's `routing mesh <https://docs.docker.com/engine/swarm/ingress/>`_ mechanism, which provides intrinsic feature of load balance and failover.
 
 #. Since we are running this cluster on virtual machines, the web service is not accessible via the host's IP address.  The workaround we are doing below is to start a NGINX container on the host, and proxy the HTTP request to the web service running on the VMs.
 
@@ -310,16 +314,16 @@ Follow the steps below to start the application stack, and make it accessible th
         swarm_proxy_1   nginx -g daemon off;   Up      0.0.0.0:80->80/tcp
 
     .. note::
-        This workaround is very practicle for production.  Imaging you have a Swarm cluster running in a private network, and you want to expose the services to the Internet.  What you need is an gateway machine proxying requests from Internet to internal Swarm cluster. `NGINX <https://www.nginx.com/>`_ is a very powerful engine for proxying HTTP traffics, providing capability of load balancing and failover.
+        This workaround is also practicle for a production environment.  Imaging you have a swarm cluster running in a private network, and you want to expose a service to the Internet.  What you need is a gateway machine proxying requests from Internet to the internal swarm cluster. `NGINX <https://www.nginx.com/>`_ is a very powerful engine for proxying HTTP traffics, providing the capability of load balancing and failover.
 
-        You may want to have a look of the NGINX configuration in the ``proxy.conf.d`` directory (part of the downloaded files) to see how to ride on the Docker Swarm's routing mesh feature for load balance and failover.
+        You may want to have a look of the NGINX configuration in the ``proxy.conf.d`` directory (part of the downloaded files) to see how to leverage on the Docker swarm's routing mesh mechanism (discussed below) for load balance and failover.
 
-Sharing Docker images
-^^^^^^^^^^^^^^^^^^^^^
+Docker registry
+^^^^^^^^^^^^^^^
 
-One benefit of using Docker swarm is that one can bring down a Docker node and the whole system will migrate all containers on it to other nodes.  This feature assumes that there is a central place where the Docker images can be pulled from.
+One benefit of using Docker swarm is that one can bring down a Docker node and the system will migrate all containers on it to other nodes.  This feature assumes that there is a central place where the Docker images can be pulled from.
 
-In the example docker-compose file above, we make use of the official MySQL image from the DockerHub and the ``php:centos`` image from a private registry, ``docker-registry.dccn.nl``.  This private registry requires user authentication.  This is why we need to login to this registry before starting the application stack.
+In the example docker-compose file above, we make use of the official MySQL image from the DockerHub and the ``demo_user_register:1.0`` image from a private registry, ``docker-registry.dccn.nl``.  This private registry requires user authentication, therefore we need to login to this registry before starting the application stack.
 
 Overlay network
 ^^^^^^^^^^^^^^^
@@ -329,6 +333,7 @@ The following picuture illustats the network setup we have created by starting u
 Technical details on how Docker sets up the overlay network is described in `this blog by Nigel Poulton <http://blog.nigelpoulton.com/demystifying-docker-overlay-networking/>`_. In short, the overlay network makes use of the `virtual extensible LAN (VXLAN) tunnel <https://en.wikipedia.org/wiki/Virtual_Extensible_LAN>`_ to route layer 2 traffic accross IP networks.
 
 .. figure:: figures/webapp_overlay_illustrate.png
+    :scale: 80%
 
     An illustration of the Docker overlay network.
 
@@ -338,12 +343,61 @@ Technical details on how Docker sets up the overlay network is described in `thi
 Container placement
 ^^^^^^^^^^^^^^^^^^^
 
+You may notice that the containers ``db`` and ``web`` services are started on a node w.r.t. the container placement requirement we set in the docker-compose file.  You can dynamically change the requirement, and the corresponding containers will be moved accordingly to meet the new requirement.  For instance, let's move the container of the ``web`` service from ``vm2`` to ``vm1`` by setting the placement constraint.
+
+Get the current placement constraints:
+
+.. code-block:: bash
+
+    [vm1]$ docker service inspect \
+    --format='{{.Spec.TaskTemplate.Placement.Constraints}}' webapp_web
+    [node.hostname == vm2 node.labels.os == linux]
+
+Move the container from ``vm2`` to ``vm1`` by removing the constraint ``node.hostname == vm2`` followed by addeing ``node.hostname == vm1``:
+
+.. code-block:: bash
+
+    [vm1]$ docker service update \
+    --constraint-rm 'node.hostname == vm2' \
+    --with-registry-auth webapp_web
+
+    .. note::
+        By removing the constraint ``node.hostname == vm2``, the container is not actually moved since the node the container is currently running on, ``vm2``, fulfills the other constraint ``node.labels.os == linux``.
+
+    [vm1]$ docker service update \
+    --constraint-add 'node.hostname == vm1' \
+    --with-registry-auth webapp_web
+
+Check again the location of the container.  It should be moved to ``vm1`` due to the newly added constraint.
+
+.. code-block:: bash
+
+    [vm1]$ docker service ps --format='{{.Node}}' webapp_web
+    vm1
+
+    [vm1]$ docker service inspect \
+    --format='{{.Spec.TaskTemplate.Placement.Constraints}}' webapp_web
+    [node.hostname == vm1 node.labels.os == linux]
+
+Let's now remove the hostname constaint:
+
+.. code-block:: bash
+
+    [vm1]$ docker service update \
+    --constraint-rm 'node.hostname == vm1' \
+    --with-registry-auth webapp_web
+
+    [vm1]$ docker service inspect \
+    --format='{{.Spec.TaskTemplate.Placement.Constraints}}' webapp_web
+    [node.labels.os == linux]
+
 Network routing mesh
 ^^^^^^^^^^^^^^^^^^^^
 
 In the Docker swarm cluster, routing mesh is the mechanism making services published to the host's network so that they can be accessed externally. It also enables each node in the cluster to accept connections on published ports of any published service, even if the service is not running on the node. Routing mesh is based on a overlay network (``ingress``) and a `IP Virtual Servers (IPVS) <http://www.linuxvirtualserver.org/software/ipvs.html>`_ load balancer (via a hindden ``ingress-sbox`` container) running on each of the Docker hosts.
 
 .. figure:: figures/webapp_routing_mesh_illustrate.png
+    :scale: 80%
 
     An illustration of the Docker ingress network and routing mesh.
 
@@ -357,38 +411,40 @@ Once can also scale the service by updating the number of *replicas* of a servic
 
 .. code-block:: bash
 
-    $ docker-machine ssh vm1
-
     [vm1]$ docker service ls
-    ID                  NAME                MODE                REPLICAS            IMAGE                                     PORTS
-    vod0xeqlrhn4        webapp_db           replicated          1/1                 mysql:latest                              
-    lnpmd1ulg2tq        webapp_web          replicated          1/1                 docker-registry.dccn.nl:5000/php:centos   *:8080->80/tcp
+    ID                  NAME                MODE                REPLICAS            IMAGE                                                 PORTS
+    qpzws2b43ttl        webapp_db           replicated          1/1                 mysql:latest                                          
+    z92cq02bqr4b        webapp_web          replicated          1/1                 docker-registry.dccn.nl:5000/demo_user_register:1.0   *:8080->80/tcp
 
     [vm1]$ docker service update --replicas 2 webapp_web
+
     [vm1]$ docker service ls
-    ID                  NAME                MODE                REPLICAS            IMAGE                                     PORTS
-    vod0xeqlrhn4        webapp_db           replicated          1/1                 mysql:latest                              
-    lnpmd1ulg2tq        webapp_web          replicated          2/2                 docker-registry.dccn.nl:5000/php:centos   *:8080->80/tcp
+    ID                  NAME                MODE                REPLICAS            IMAGE                                                 PORTS
+    qpzws2b43ttl        webapp_db           replicated          1/1                 mysql:latest                                          
+    z92cq02bqr4b        webapp_web          replicated          2/2                 docker-registry.dccn.nl:5000/demo_user_register:1.0   *:8080->80/tcp
 
 Rotating update
 ^^^^^^^^^^^^^^^
 
-Since we have two ``webapp_web`` replicas running in the cluster, we could now perform a rotating update without downtime.
+Since we have two ``webapp_web`` replicas running in the cluster, we could now perform a rotating update without service downtime.
 
-Let's make some changes in our web interface codes, e.g.
+Assuming that the app developer has update the Docker registry with a new container image, the new image name is ``docker-registry.dccn.nl:5000/demo_user_registry:2.0``, and we want to apply this new image in the cluster without service interruption.  To achieve it, we do a rotating update on the service ``webapp_web``.
 
-.. code-block:: bash
-
-    [vm1]$ cp app_new/search*.php app
-    [vm1]$ cp app_new/navbar.php app/include/navbar.php
-
-The new codes add search functionality to the web application.  Following to that, we will have to restart the service, using the ``docker service update`` command:
+To demonstrate the non-interrupted update, let's open a new terminal and keep pulling the web page from the service:
 
 .. code-block:: bash
 
-    [vm1]$ docker service update --force webapp_web
+    $ while true; do curl http://192.168.99.100:8080 2>/dev/null | grep 'Served by host'; sleep 1; done
 
-From the output of the command above, you may notice that the update on the two replicas is already a rotating update.  For instance, Docker only updates one replica at a time.  During the update, other replicas are still available for serving requests.
+Use the following command to perform the rotating update:
+
+.. code-block:: bash
+
+    [vm1]$ docker service update \
+    --image docker-registry.dccn.nl:5000/demo_user_register:2.0 \
+    --update-parallelism 1 \
+    --update-delay 10s \
+    --with-registry-auth webapp_web
 
 Node management
 ===============
@@ -406,20 +462,26 @@ Sometimes we need to perform maintenance on a Docker node.  In the Docker swarm 
 Once you have done that, you will notice all containers running on ``vm2`` are automatically moved to ``vm1``.
 
     .. code-block:: bash
-        :emphasize-lines: 3,4
 
         [vm1]$ docker stack ps webapp
-        ID                  NAME                IMAGE                                     NODE                DESIRED STATE       CURRENT STATE             ERROR               PORTS
-        9lmdd6cg2y74        webapp_web.1        docker-registry.dccn.nl:5000/php:centos   vm1                 Ready               Ready 3 seconds ago                           
-        ptq7l3kw6suk         \_ webapp_web.1    docker-registry.dccn.nl:5000/php:centos   vm2                 Shutdown            Running 3 seconds ago                         
-        zk9vcd5svqr2         \_ webapp_web.1    docker-registry.dccn.nl:5000/php:centos   vm2                 Shutdown            Shutdown 11 minutes ago                       
-        qa7ixd3f0c2j        webapp_db.1         mysql:latest                              vm1                 Running             Running 16 minutes ago                        
-        845mdx95dxho        webapp_web.2        docker-registry.dccn.nl:5000/php:centos   vm1                 Running             Running 11 minutes ago                        
-        akjedulcbtt5         \_ webapp_web.2    docker-registry.dccn.nl:5000/php:centos   vm1                 Shutdown            Shutdown 11 minutes ago
+        ID                  NAME                IMAGE                                                 NODE                DESIRED STATE       CURRENT STATE             ERROR               PORTS
+        cwoszv8lupq3        webapp_web.1        docker-registry.dccn.nl:5000/demo_user_register:2.0   vm1                 Running             Running 41 seconds ago                        
+        rtv2hndyxveh         \_ webapp_web.1    docker-registry.dccn.nl:5000/demo_user_register:2.0   vm2                 Shutdown            Shutdown 41 seconds ago                       
+        3he78fis5jkn         \_ webapp_web.1    docker-registry.dccn.nl:5000/demo_user_register:1.0   vm2                 Shutdown            Shutdown 6 minutes ago                        
+        675z5ukg3ian        webapp_db.1         mysql:latest                                          vm1                 Running             Running 14 minutes ago                        
+        mj1547pj2ac0        webapp_web.2        docker-registry.dccn.nl:5000/demo_user_register:2.0   vm1                 Running             Running 5 minutes ago                         
+        yuztiqacgro0         \_ webapp_web.2    docker-registry.dccn.nl:5000/demo_user_register:1.0   vm1                 Shutdown            Shutdown 5 minutes ago                
 
 After the maintenance work, just set the node's availability to ``active`` again:
 
     .. code-block:: bash
 
-        [vm1]$ docker node update --availability activate vm2
+        [vm1]$ docker node update --availability active vm2
+
+And run the following command to rebalance the service so that two replicas runs on two different nodes:
+
+    .. code-block:: bash
+
+        [vm1]$ docker service update --force \
+        --with-registry-auth webapp_web
 

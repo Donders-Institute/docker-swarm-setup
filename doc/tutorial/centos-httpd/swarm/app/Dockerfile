@@ -16,7 +16,7 @@ RUN yum -y --setopt=tsflags=nodocs install php php-mysql && \
 EXPOSE 80
 
 # copy the application into /var/www/html
-COPY ./html/* /var/www/html/
+COPY ./html /var/www/html/
 
 # Simple startup script to avoid some issues observed with container restart
 ADD run-httpd.sh /run-httpd.sh
