@@ -484,6 +484,5 @@ And run the following command to rebalance the service so that two replicas runs
 
 .. code-block:: bash
 
-    [vm1]$ docker service update --force \
-    --with-registry-auth webapp_web
+    [vm1]$ docker service update --force --with-registry-auth webapp_web
 
