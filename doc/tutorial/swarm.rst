@@ -451,37 +451,37 @@ Node management
 
 Sometimes we need to perform maintenance on a Docker node.  In the Docker swarm cluster, one first drains the containers on the node we want to maintain.  This is done by setting the node's availability to ``drain``.  For example, if we want to perform maintenance on ``vm2``:
 
-    .. code-block:: bash
+.. code-block:: bash
 
-        [vm1]$ docker node update --availability drain vm2
-        [vm1]$ docker node ls
-        ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
-        svdjh0i3k9ty5lsf4lc9d94mw *   vm1                 Ready               Active              Leader              18.06.1-ce
-        m5r1j48nnl1u9n9mbr8ocwoa3     vm2                 Ready               Drain               Reachable           18.06.1-ce
+    [vm1]$ docker node update --availability drain vm2
+    [vm1]$ docker node ls
+    ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+    svdjh0i3k9ty5lsf4lc9d94mw *   vm1                 Ready               Active              Leader              18.06.1-ce
+    m5r1j48nnl1u9n9mbr8ocwoa3     vm2                 Ready               Drain               Reachable           18.06.1-ce
 
 Once you have done that, you will notice all containers running on ``vm2`` are automatically moved to ``vm1``.
 
-    .. code-block:: bash
+.. code-block:: bash
 
-        [vm1]$ docker stack ps webapp
-        ID                  NAME                IMAGE                                                 NODE                DESIRED STATE       CURRENT STATE             ERROR               PORTS
-        cwoszv8lupq3        webapp_web.1        docker-registry.dccn.nl:5000/demo_user_register:2.0   vm1                 Running             Running 41 seconds ago                        
-        rtv2hndyxveh         \_ webapp_web.1    docker-registry.dccn.nl:5000/demo_user_register:2.0   vm2                 Shutdown            Shutdown 41 seconds ago                       
-        3he78fis5jkn         \_ webapp_web.1    docker-registry.dccn.nl:5000/demo_user_register:1.0   vm2                 Shutdown            Shutdown 6 minutes ago                        
-        675z5ukg3ian        webapp_db.1         mysql:latest                                          vm1                 Running             Running 14 minutes ago                        
-        mj1547pj2ac0        webapp_web.2        docker-registry.dccn.nl:5000/demo_user_register:2.0   vm1                 Running             Running 5 minutes ago                         
-        yuztiqacgro0         \_ webapp_web.2    docker-registry.dccn.nl:5000/demo_user_register:1.0   vm1                 Shutdown            Shutdown 5 minutes ago                
+    [vm1]$ docker stack ps webapp
+    ID                  NAME                IMAGE                                                 NODE                DESIRED STATE       CURRENT STATE             ERROR               PORTS
+    cwoszv8lupq3        webapp_web.1        docker-registry.dccn.nl:5000/demo_user_register:2.0   vm1                 Running             Running 41 seconds ago                        
+    rtv2hndyxveh         \_ webapp_web.1    docker-registry.dccn.nl:5000/demo_user_register:2.0   vm2                 Shutdown            Shutdown 41 seconds ago                       
+    3he78fis5jkn         \_ webapp_web.1    docker-registry.dccn.nl:5000/demo_user_register:1.0   vm2                 Shutdown            Shutdown 6 minutes ago                        
+    675z5ukg3ian        webapp_db.1         mysql:latest                                          vm1                 Running             Running 14 minutes ago                        
+    mj1547pj2ac0        webapp_web.2        docker-registry.dccn.nl:5000/demo_user_register:2.0   vm1                 Running             Running 5 minutes ago                         
+    yuztiqacgro0         \_ webapp_web.2    docker-registry.dccn.nl:5000/demo_user_register:1.0   vm1                 Shutdown            Shutdown 5 minutes ago                
 
 After the maintenance work, just set the node's availability to ``active`` again:
 
-    .. code-block:: bash
+.. code-block:: bash
 
-        [vm1]$ docker node update --availability active vm2
+    [vm1]$ docker node update --availability active vm2
 
 And run the following command to rebalance the service so that two replicas runs on two different nodes:
 
-    .. code-block:: bash
+.. code-block:: bash
 
-        [vm1]$ docker service update --force \
-        --with-registry-auth webapp_web
+    [vm1]$ docker service update --force \
+    --with-registry-auth webapp_web
 
