@@ -358,8 +358,10 @@ Move the container from ``vm2`` to ``vm1`` by removing the constraint ``node.hos
     --constraint-rm 'node.hostname == vm2' \
     --with-registry-auth webapp_web
 
-    .. note::
-        By removing the constraint ``node.hostname == vm2``, the container is not actually moved since the node the container is currently running on, ``vm2``, fulfills the other constraint ``node.labels.os == linux``.
+.. note::
+    By removing the constraint ``node.hostname == vm2``, the container is not actually moved since the node the container is currently running on, ``vm2``, fulfills the other constraint ``node.labels.os == linux``.
+
+.. code-block:: bash
 
     [vm1]$ docker service update \
     --constraint-add 'node.hostname == vm1' \
