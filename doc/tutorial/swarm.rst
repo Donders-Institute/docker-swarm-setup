@@ -59,7 +59,7 @@ Architecture
 
 The architecture of the Docker swarm cluster is relatively simple comparing to other distributed container orchestration platforms. As illustrated in :numref:`swarmarchitecture`, each Docker host in the swarm cluster is either a *manager* or a *worker*.
 
-By design, manager nodes are no difference to the worker nodes in sharing container workload; except that manager nodes are also responsible for maintaining the status of the cluster using a distributed state store.  Managers exchange information with each other in order to maitain sufficient quorum of the `Raft consensus algorithm <https://en.wikipedia.org/wiki/Raft_(computer_science)>`_ which is essential to the cluster fault tolerance.
+By design, manager nodes are no difference to the worker nodes in sharing container workload; except that manager nodes are also responsible for maintaining the status of the cluster using a distributed state store.  Managers exchange information with each other in order to maitain sufficient quorum of the `Raft consensus <https://en.wikipedia.org/wiki/Raft_(computer_science)>`_ which is essential to the cluster fault tolerance.
 
 .. figure:: ../figures/swarm-architecture.png
     :name: swarmarchitecture
@@ -77,7 +77,7 @@ A *stack* is referred to a group of connected *services*.  Similar to the single
 Creating a cluster
 ==================
 
-Docker swarm is essentially a "mode" of the Docker engine.  This mode is added since version 1.12 in 2016. To create a new cluster, we just need to pick up a Docker host (`vm1` for instance) and do:
+Docker swarm is essentially a "mode" of the Docker engine.  This mode has been introduced to the Docker engine since version 1.12 in 2016. To create a new cluster, we just need to pick up the first Docker host (`vm1` for instance) and do:
 
 .. code-block:: bash
 
@@ -97,7 +97,7 @@ After that you could check the cluster using
     ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
     svdjh0i3k9ty5lsf4lc9d94mw *   vm1                 Ready               Active              Leader              18.06.1-ce
 
-Et voilà! You have just created a swarm cluster, as simple as one command... As you have noticed, it is a one-node cluster.  In addition, you see that the node is by default a manager. Since it is the only manager, it is also the leading manager (*Leader*).
+Et voilà! You have just created a swarm cluster, as simple as one command... Obviously, it is a cluster with only one node, and the node is by default a manager. Since it is the only manager, it is also the leading manager (*Leader*).
 
 Join tokens
 ===========
@@ -125,7 +125,7 @@ The output of these two commands simply tells you what to run on the nodes that 
 Adding nodes
 ============
 
-Adding nodes is done by executing the command provided by the ``docker swarm join-token`` commands above on the node that you are about to add.  For example, let's add our second docker machine (``vm2``) to the cluster as a manager:
+Adding nodes is done by executing the command suggested by the ``docker swarm join-token`` on the node that you are about to add.  For example, let's add our second docker machine (``vm2``) to the cluster as a manager:
 
 .. code-block:: bash
 
@@ -158,7 +158,7 @@ Sometimes it is useful to lable the nodes.  Node lables are useful for container
 Promoting and demoting nodes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The manager node can demote other manager to become worker or promote worker to become manager. This dynamics allows administrator to ensure sufficient amount of managers in the cluster for cluster failover; while some manager nodes need to go down for maintenance.  Let's demote ``vm2`` from manager to worker:
+The manager node can demote other manager to become worker or promote worker to become manager. This dynamics allows administrator to ensure sufficient amount of managers (in order to maintain the state of the cluster); while some manager nodes need to go down for maintenance.  Let's demote ``vm2`` from manager to worker:
 
 .. code-block:: bash
 
@@ -185,7 +185,7 @@ The following docker-compose file is modified from the one we used in the :ref:`
 * we stripped down the network part,
 * we added container placement requirements via the ``deploy`` section,
 * we persistented MySQL data in a docker volume (*due to the fact that I don't know how to make bind-mount working with MySQL container in a swarm of docker machines*),
-* we made use of a private docker image registry.
+* we made use of a private docker image registry for the ``web`` service.
 
 .. code-block:: yaml
     :linenos:
@@ -246,17 +246,15 @@ The following docker-compose file is modified from the one we used in the :ref:`
 Launching stack
 ===============
 
-The docker-compose file above is already provided as part of the downloaded files in the preparation step.  The filename is ``docker-compose.swarm.yml``.
+The docker-compose file above is already provided as part of the downloaded files in the preparation step.  The filename is ``docker-compose.swarm.yml``. Follow the steps below to start the application stack.
 
-Follow the steps below to start the application stack, and make it accessible through the host on which the two docker-machine VMs are running:
-
-#. Get into ``vm1`` and go to the directory in which you have downloaded the files for this tutorial.  It is a directory mounted under the ``/hosthome`` directory in the VM, e.g.
+#. On ``vm1``, go to the directory in which you have downloaded the files for this tutorial.  It is a directory mounted under the ``/hosthome`` directory in the VM, e.g.
 
     .. code-block:: bash
 
         [vm1]$ cd /hosthome/tg/honlee/tmp/swarm
 
-#. Login to the private registry with user *demo*:
+#. Login to the private Docker registry with user *demo*:
 
     .. code-block:: bash
 
@@ -272,7 +270,7 @@ Follow the steps below to start the application stack, and make it accessible th
         Creating service webapp_web
 
     .. note::
-        The ``--with-registry-auth`` is very important for pulling the ``php:centos`` image from the private repository.
+        The ``--with-registry-auth`` is very important for pulling image from the private repository.
 
 #. Check if the stack is started properly:
 
@@ -302,7 +300,7 @@ Follow the steps below to start the application stack, and make it accessible th
 
     This is the magic of Docker swarm's `routing mesh <https://docs.docker.com/engine/swarm/ingress/>`_ mechanism, which provides intrinsic feature of load balance and failover.
 
-#. Since we are running this cluster on virtual machines, the web service is not accessible via the host's IP address.  The workaround we are doing below is to start a NGINX container on the host, and proxy the HTTP request to the web service running on the VMs.
+Since we are running this cluster on virtual machines, the web service is not accessible via the host's IP address.  The workaround we are doing below is to start a NGINX container on the host, and proxy the HTTP request to the web service running on the VMs.
 
     .. code-block:: bash
 
@@ -313,10 +311,10 @@ Follow the steps below to start the application stack, and make it accessible th
         -----------------------------------------------------------------
         swarm_proxy_1   nginx -g daemon off;   Up      0.0.0.0:80->80/tcp
 
-    .. note::
-        This workaround is also practicle for a production environment.  Imaging you have a swarm cluster running in a private network, and you want to expose a service to the Internet.  What you need is a gateway machine proxying requests from Internet to the internal swarm cluster. `NGINX <https://www.nginx.com/>`_ is a very powerful engine for proxying HTTP traffics, providing the capability of load balancing and failover.
+.. tip::
+    This workaround is also applicable for a production environment.  Imaging you have a swarm cluster running in a private network, and you want to expose a service to the Internet.  What you need is a gateway machine proxying requests from Internet to the internal swarm cluster. `NGINX <https://www.nginx.com/>`_ is a very powerful engine for proxying HTTP traffic.  It also provides capability of load balancing and failover.
 
-        You may want to have a look of the NGINX configuration in the ``proxy.conf.d`` directory (part of the downloaded files) to see how to leverage on the Docker swarm's routing mesh mechanism (discussed below) for load balance and failover.
+    You may want to have a look of the NGINX configuration in the ``proxy.conf.d`` directory (part of the downloaded files) to see how to leverage on the Docker swarm's routing mesh mechanism (discussed below) for load balance and failover.
 
 Docker registry
 ^^^^^^^^^^^^^^^
@@ -328,21 +326,21 @@ In the example docker-compose file above, we make use of the official MySQL imag
 Overlay network
 ^^^^^^^^^^^^^^^
 
-The following picuture illustats the network setup we have created by starting up the ``webapp`` stack.  The way Docker swarm interconnects containers on different docker hosts is using the so-called *overlay network*.
+The following picuture illustats the network setup we have created with the ``webapp`` stack.  The way Docker swarm interconnects containers on different docker hosts is using the so-called *overlay network*.
 
-Technical details on how Docker sets up the overlay network is described in `this blog by Nigel Poulton <http://blog.nigelpoulton.com/demystifying-docker-overlay-networking/>`_. In short, the overlay network makes use of the `virtual extensible LAN (VXLAN) tunnel <https://en.wikipedia.org/wiki/Virtual_Extensible_LAN>`_ to route layer 2 traffic accross IP networks.
+Technical details on how Docker swarm sets up the overlay network is described in `this blog by Nigel Poulton <http://blog.nigelpoulton.com/demystifying-docker-overlay-networking/>`_. In short, the overlay network makes use of the `virtual extensible LAN (VXLAN) tunnel <https://en.wikipedia.org/wiki/Virtual_Extensible_LAN>`_ to route layer 2 traffic accross IP networks.
 
 .. figure:: figures/webapp_overlay_illustrate.png
 
     An illustration of the Docker overlay network.
 
 .. hint::
-    There are also YouTube videos explaining the Docker overlay network.  For example, the `Deep dive in Docker Overlay Networks by Laurent Bernaille <https://www.youtube.com/watch?v=b3XDl0YsVsg>`_ is a good worth for watching.
+    There are also YouTube videos explaining the Docker overlay network.  For example, the `Deep dive in Docker Overlay Networks by Laurent Bernaille <https://www.youtube.com/watch?v=b3XDl0YsVsg>`_ is worth for watching.
 
 Container placement
 ^^^^^^^^^^^^^^^^^^^
 
-You may notice that the containers ``db`` and ``web`` services are started on a node w.r.t. the container placement requirement we set in the docker-compose file.  You can dynamically change the requirement, and the corresponding containers will be moved accordingly to meet the new requirement.  For instance, let's move the container of the ``web`` service from ``vm2`` to ``vm1`` by setting the placement constraint.
+You may notice that the containers ``db`` and ``web`` services are started on a node w.r.t. the container placement requirement we set in the docker-compose file.  You can dynamically change the requirement, and the corresponding containers will be moved accordingly to meet the new requirement.  Let's try to move the container of the ``web`` service from ``vm2`` to ``vm1`` by setting the placement constraint.
 
 Get the current placement constraints:
 
@@ -393,7 +391,11 @@ Let's now remove the hostname constaint:
 Network routing mesh
 ^^^^^^^^^^^^^^^^^^^^
 
-In the Docker swarm cluster, routing mesh is the mechanism making services published to the host's network so that they can be accessed externally. It also enables each node in the cluster to accept connections on published ports of any published service, even if the service is not running on the node. Routing mesh is based on a overlay network (``ingress``) and a `IP Virtual Servers (IPVS) <http://www.linuxvirtualserver.org/software/ipvs.html>`_ load balancer (via a hindden ``ingress-sbox`` container) running on each of the Docker hosts.
+In the Docker swarm cluster, routing mesh is a mechanism making services exposed to the host's public network so that they can be accessed externally. This mechanism also enables each node in the cluster to accept connections on published ports of any published service, even if the service is not running on the node.
+
+Routing mesh is based on an overlay network (``ingress``) and a `IP Virtual Servers (IPVS) <http://www.linuxvirtualserver.org/software/ipvs.html>`_ load balancer (via a hindden ``ingress-sbox`` container) running on each node of the swarm cluster.
+
+The figure below illustrates the overall network topology of the ``webapp`` stack with the ``ingress`` network and ``ingress-sbox`` load balancer for the routing mesh.
 
 .. figure:: figures/webapp_routing_mesh_illustrate.png
 
@@ -405,7 +407,7 @@ Service management
 Scaling
 ^^^^^^^
 
-Once can also scale the service by updating the number of *replicas* of a service.  Let's scale the ``webapp_web`` service to 2 replicas.
+Service can be scaled up and down by updating the number of *replicas*.  Let's scale the ``webapp_web`` service to 2 replicas:
 
 .. code-block:: bash
 
@@ -447,7 +449,7 @@ Use the following command to perform the rotating update:
 Node management
 ===============
 
-Sometimes we need to perform maintenance on a Docker node.  In the Docker swarm cluster, one first drains the containers on the node to be maintained.  This is done by setting the node's availability to ``drain``.  For example, if we want to perform maintenance on ``vm2``:
+Sometimes we need to perform maintenance on a Docker node.  In the Docker swarm cluster, one first drains the containers on the node we want to maintain.  This is done by setting the node's availability to ``drain``.  For example, if we want to perform maintenance on ``vm2``:
 
     .. code-block:: bash
 
