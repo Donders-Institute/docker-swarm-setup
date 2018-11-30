@@ -36,6 +36,8 @@ Next step is to download the files prepared for this exercise:
     $ tar xvzf swarm.tar.gz
     $ cd swarm
 
+Install the `docker-machine` tool following `this page <https://docs.docker.com/machine/install-machine/#install-machine-directly>`_.
+
 Bootstrap two docker machines with the prepared script:
 
 .. code-block:: bash
