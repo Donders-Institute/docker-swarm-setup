@@ -32,7 +32,7 @@ Next step is to download the files prepared for this exercise:
 
     $ mkdir -p ~/tmp
     $ cd ~/tmp
-    $ https://github.com/Donders-Institute/docker-swarm-setup/raw/master/doc/tutorial/centos-httpd/swarm.tar.gz
+    $ wget https://github.com/Donders-Institute/docker-swarm-setup/raw/master/doc/tutorial/centos-httpd/swarm.tar.gz
     $ tar xvzf swarm.tar.gz
     $ cd swarm
 
